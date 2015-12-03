@@ -1,0 +1,34 @@
+{
+  "name": "alchemy-resource",
+  "description": "alchemy-resource is a layer on alchemy-ether that adds resource",
+  "version": "0.0.1",
+  "homepage": "https://github.com/LoyaltyNZ/alchemy-resource",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LoyaltyNZ/alchemy-resource.git"
+  },
+  "author": {
+    "name": "Graham Jenson",
+    "email": "Graham.Jenson@loyalty.co.nz"
+  },
+  "main": "src/alchemy-resource.litcoffee",
+  "engines": {
+    "node": ">= 0.12.7"
+  },
+  "dependencies": {
+    "alchemy-ether": "git+ssh://git@github.com/LoyaltyNZ/alchemy-ether.git#master",
+    "coffee-script": "1.10.0",
+    "memcached": "2.2.0",
+    "bluebird": "3.0.5",
+    "lodash": "3.10.1"
+  },
+  "devDependencies": {
+    "mocha": "2.3.4",
+    "chai": "3.4.1"
+  },
+  "scripts": {
+    "test": "mocha",
+    "doc": "docco -l linear src/alchemy-resource.litcoffee && docco src/*.coffee -o docs/src && docco examples/*.coffee -o docs/examples"
+  },
+  "license": "LGPL 3.0"
+}

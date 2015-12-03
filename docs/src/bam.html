@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Bam</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="bam.html">
+                  bam.coffee
+                </a>
+              
+                
+                <a class="source" href="memcached_session_client.html">
+                  memcached_session_client.coffee
+                </a>
+              
+                
+                <a class="source" href="resource.html">
+                  resource.coffee
+                </a>
+              
+                
+                <a class="source" href="resource_service.html">
+                  resource_service.coffee
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h1 id="bam">Bam</h1>
+<p>Bam describes the format and content for different error types in Alchemy Resource
+(in homage to <a href="https://www.npmjs.com/package/boom">Boom</a>).
+It bases the structure on the <a href="https://github.com/LoyaltyNZ/hoodoo">Hoodoo project</a>,
+which described the meaning of the messages.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>It reuses the UUIDs from Alchemy Ether as reference IDs</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>generateUUID = <span class="hljs-built_in">require</span>(<span class="hljs-string">"alchemy-ether"</span>).generateUUID
+
+Bam = {}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p><code>joi_validation_error</code> takes an error from the JSON validation library <a href="https://www.npmjs.com/package/joi">Joi</a>
+ and formats it into a Alchemy Resource error</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Bam.joi_validation_error = <span class="hljs-function"><span class="hljs-params">(joi_error)</span> -&gt;</span>
+  errors = []
+  <span class="hljs-keyword">for</span> deet <span class="hljs-keyword">in</span> joi_error.details
+    <span class="hljs-keyword">switch</span> deet.type
+      <span class="hljs-keyword">when</span> <span class="hljs-string">'any.required'</span>
+        errors.push {
+          code: <span class="hljs-string">"generic.required_field_missing"</span>
+          message: deet.message
+        }
+      <span class="hljs-keyword">when</span> <span class="hljs-string">'object.missing'</span>
+        errors.push {
+          code: <span class="hljs-string">"generic.required_field_missing"</span>
+          message: deet.message
+        }
+      <span class="hljs-keyword">when</span> <span class="hljs-string">'string.regex.base'</span>
+        errors.push {
+          code: <span class="hljs-string">"generic.invalid_string"</span>
+          message: deet.message
+        }
+      <span class="hljs-keyword">else</span>
+        errors.push {
+          code: <span class="hljs-string">"generic.unknown"</span>
+          message: deet.message
+          type: deet.type
+        }
+
+  {
+    bam: <span class="hljs-literal">true</span>
+    status_code: <span class="hljs-number">422</span>
+    body: {
+      errors: errors
+      reference: generateUUID()
+    }
+  }
+
+
+Bam.malformed_body = <span class="hljs-function">-&gt;</span>
+  {
+    bam: <span class="hljs-literal">true</span>
+    status_code: <span class="hljs-number">422</span>
+    body: {
+      code: <span class="hljs-string">"platform.malformed"</span>
+      message: <span class="hljs-string">"malformed body data"</span>
+      reference: generateUUID()
+    }
+  }
+
+Bam.method_not_allowed = <span class="hljs-function">-&gt;</span>
+  {
+    bam: <span class="hljs-literal">true</span>
+    status_code: <span class="hljs-number">405</span>
+    body: {
+      code: <span class="hljs-string">"platform.method_not_allowed"</span>
+      message: <span class="hljs-string">"not allowed"</span>
+      reference: generateUUID()
+    }
+  }
+
+Bam.no_interaction_id = <span class="hljs-function">-&gt;</span>
+  {
+    bam: <span class="hljs-literal">true</span>
+    status_code: <span class="hljs-number">422</span>
+    body: {
+      code: <span class="hljs-string">"platform.no_interaction_id"</span>
+      message: <span class="hljs-string">"no interaction id"</span>
+      reference: generateUUID()
+    }
+  }
+
+Bam.required_field_missing = <span class="hljs-function"><span class="hljs-params">(message)</span> -&gt;</span>
+  {
+    bam: <span class="hljs-literal">true</span>
+    status_code: <span class="hljs-number">422</span>
+    body: {
+      code: <span class="hljs-string">"generic.required_field_missing"</span>
+      message: <span class="hljs-string">"<span class="hljs-subst">#{message}</span>"</span>
+      reference: generateUUID()
+    }
+  }
+
+Bam.not_allowed = <span class="hljs-function">-&gt;</span>
+  {
+    bam: <span class="hljs-literal">true</span>
+    status_code: <span class="hljs-number">403</span>
+    body: {
+      code: <span class="hljs-string">"platform.forbidden"</span>
+      message: <span class="hljs-string">"not allowed"</span>
+      reference: generateUUID()
+    }
+  }
+
+Bam.not_found = <span class="hljs-function"><span class="hljs-params">(resource)</span> -&gt;</span>
+  {
+    bam: <span class="hljs-literal">true</span>
+    status_code: <span class="hljs-number">404</span>
+    body: {
+      code: <span class="hljs-string">"platform.not_found"</span>
+      message: <span class="hljs-string">"<span class="hljs-subst">#{resource}</span> not found"</span>
+      reference: generateUUID()
+    }
+  }
+
+Bam.exists = <span class="hljs-function"><span class="hljs-params">(resource)</span> -&gt;</span>
+  {
+    bam: <span class="hljs-literal">true</span>
+    status_code: <span class="hljs-number">422</span>
+    body: {
+      code: <span class="hljs-string">"platform.exists"</span>
+      message: <span class="hljs-string">"<span class="hljs-subst">#{resource}</span> already exists"</span>
+      reference: generateUUID()
+    }
+  }
+
+Bam.error = <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
+  error = {
+    bam: <span class="hljs-literal">true</span>
+    status_code: <span class="hljs-number">500</span>
+    body: {
+      code: <span class="hljs-string">'platform.fault'</span>
+      message: <span class="hljs-string">'An unexpected error occurred'</span>
+
+    }
+  }
+
+  <span class="hljs-keyword">if</span> process.env.NODE_ENV <span class="hljs-keyword">in</span> [<span class="hljs-string">'development'</span>, <span class="hljs-string">'test'</span>, <span class="hljs-string">'staging'</span>]
+    error.stack = err.stack
+  error
+
+<span class="hljs-built_in">module</span>.exports = Bam</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

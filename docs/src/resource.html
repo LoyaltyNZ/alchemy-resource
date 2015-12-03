@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Resource</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="bam.html">
+                  bam.coffee
+                </a>
+              
+                
+                <a class="source" href="memcached_session_client.html">
+                  memcached_session_client.coffee
+                </a>
+              
+                
+                <a class="source" href="resource.html">
+                  resource.coffee
+                </a>
+              
+                
+                <a class="source" href="resource_service.html">
+                  resource_service.coffee
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h1 id="resource">Resource</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="imports">Imports</h2>
+<ul>
+<li><code>bluebird</code> is the promises library</li>
+<li><code>lodash</code> is used as a general purpose utility library</li>
+<li><code>Bam</code> is the error library used to generate errors if a method is not implemented</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>bb = <span class="hljs-built_in">require</span> <span class="hljs-string">"bluebird"</span>
+_ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'lodash'</span>)
+Bam = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./bam'</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="resource">Resource</h2>
+<p>Resource is the class to override to implement a resource to be deployed
+Each resource has:</p>
+<ol>
+<li><code>name</code> of the resource used for logging and authentication</li>
+<li><code>path</code> of the resource used for service discovery and routing</li>
+<li><code>show</code>, <code>create</code>, <code>update</code> and <code>delete</code> methods, meant to be overridden by the resource implementations.</li>
+<li><code>start</code> and <code>stop</code> lifecycle methods  to control its connections</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Resource</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h4 id="routing-and-paths">Routing and Paths</h4>
+<p><a href="https://www.rabbitmq.com/tutorials/tutorial-five-javascript.html">RabbitMQ topic exchanges</a>
+route a message using a <strong>routing key</strong> to queues bound with a <strong>binding key</strong>.
+Alchemy Resource binds resources to the topic exchange <code>resources.exchange</code>
+and converts URL paths into routing keys
+to route messages to the right resources without knowing their specific location or queue.</p>
+<p>For example, the <em>*users</em> resource has the path of <code>/v1/users</code>.
+By binding this resource to the <code>resources.exchange</code> with the <code>binding_key</code> <code>v1.users.#</code>
+(the <code>.#</code> means zero-to-many additional words),
+messages with paths <code>/v1/users</code> and <code>/v1/users/1</code>,
+and routing keys <code>v1.users</code> and <code>v1.users.1</code> respectively,
+would be routed to the users resource.</p>
+<p>Note: path conflicts will occur if you have resource that has a parent path of another.
+For example, if two resources had paths <code>/v1/users</code> and <code>/v1/users/registered</code>
+messages sent to <code>/v1/users/registered</code> will be send to <strong>both</strong> resources,
+unless the resources are in the same service then it will make it to only one.
+So, don’t have resources that have parent paths.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p><code>path_to_routing_key</code> is the class method that takes a <code>path</code> and converts it into a RabbitMQ routing key.
+The path is converted to a routing key by:</p>
+<ol>
+<li>converting all <code>&#39;/&#39;</code> characters to <code>&#39;.&#39;</code> except the first and last characters</li>
+<li>adding all non <code>&#39;/&#39;</code> characters</li>
+</ol>
+<p>For Example, <code>path_to_routing_key(&#39;/v1/users&#39;)</code> return <code>&#39;v1.users&#39;</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  @path_to_routing_key = <span class="hljs-function"><span class="hljs-params">(path)</span> -&gt;</span>
+    new_path = <span class="hljs-string">""</span>
+    <span class="hljs-keyword">for</span> c,i <span class="hljs-keyword">in</span> path
+      <span class="hljs-keyword">if</span> c == <span class="hljs-string">'/'</span> <span class="hljs-keyword">and</span> i != <span class="hljs-number">0</span> <span class="hljs-keyword">and</span> i != path.length<span class="hljs-number">-1</span>
+        new_path += <span class="hljs-string">'.'</span>
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> c != <span class="hljs-string">'/'</span>
+        new_path += c
+    new_path</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p><code>matches_path</code> checks to see if a <code>path</code> should be routed to this resource.</p>
+<p>It first normalises the incoming path
+and check to see if it starts with the same string as the resources path.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  matches_path: <span class="hljs-function"><span class="hljs-params">(path)</span> -&gt;</span>
+    path = path.replace(<span class="hljs-regexp">/(^\/)|(\/$)/g</span>, <span class="hljs-string">""</span>) <span class="hljs-comment"># normalise path by remove trailing and leading /</span>
+    <span class="hljs-keyword">return</span> _.startsWith(path, @path)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p><code>constructor(name, path)</code> takes a <code>name</code> string and a url <code>path</code>.
+The <code>path</code> is normalised to make string matching easier,
+then a <code>binding_key</code> is created by using <code>path_to_routing_key</code> and adding the wild card <code>.#</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  constructor: <span class="hljs-function"><span class="hljs-params">(@name, @path)</span> -&gt;</span>
+    @path = @path.replace(<span class="hljs-regexp">/(^\/)|(\/$)/g</span>, <span class="hljs-string">""</span>) <span class="hljs-comment"># normalise path by remove trailing and leading /</span>
+    @binding_key = <span class="hljs-string">"<span class="hljs-subst">#{Resource.path_to_routing_key(@path)}</span>.#"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h4 id="life-cycle">Life Cycle</h4>
+<p>Allowing a resource to override <code>start</code> and <code>stop</code> methods lets a resource:</p>
+<ul>
+<li>raise errors if required services (e.g. databases) are not available</li>
+<li>connect to services before being asked to process messages</li>
+<li>clean up connections when being asked to stop</li>
+</ul>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p><code>start</code> returns and empty promise by default</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  start: <span class="hljs-function"><span class="hljs-params">()</span> -&gt;</span>
+    bb.<span class="hljs-keyword">try</span>( <span class="hljs-function">-&gt;</span> )</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p><code>stop</code> returns and empty promise by default</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  stop: <span class="hljs-function"><span class="hljs-params">()</span> -&gt;</span>
+    bb.<span class="hljs-keyword">try</span>( <span class="hljs-function">-&gt;</span> )</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <h4 id="resource-methods">Resource Methods</h4>
+<p>A resource implementation can override these methods to implement its processing functions</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p><code>show</code> method will be called on a <code>GET</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  show: <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
+    <span class="hljs-keyword">throw</span> Bam.method_not_allowed()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p><code>create</code> method will be called on a <code>POST</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  create: <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
+    <span class="hljs-keyword">throw</span> Bam.method_not_allowed()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p><code>update</code> method will be called on a <code>PATCH</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  update: <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
+    <span class="hljs-keyword">throw</span> Bam.method_not_allowed()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p><code>delete</code> method will be called on a <code>DELETE</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  delete: <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
+    <span class="hljs-keyword">throw</span> Bam.method_not_allowed()
+
+
+<span class="hljs-built_in">module</span>.exports = Resource</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

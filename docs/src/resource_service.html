@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Resource Service</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="bam.html">
+                  bam.coffee
+                </a>
+              
+                
+                <a class="source" href="memcached_session_client.html">
+                  memcached_session_client.coffee
+                </a>
+              
+                
+                <a class="source" href="resource.html">
+                  resource.coffee
+                </a>
+              
+                
+                <a class="source" href="resource_service.html">
+                  resource_service.coffee
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h1 id="resource-service">Resource Service</h1>
+<p>ResourceService is an Alchemy Service to provides a place for many Resources to receive messages.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="imports">Imports</h2>
+<ul>
+<li><code>bluebird</code> is the promises library</li>
+<li><code>lodash</code> is used as a general purpose utility library</li>
+<li><code>Service</code> is used to communicate over the queue to handle messages</li>
+<li><code>Bam</code> is the error library used to generate errors if a method is not implemented</li>
+<li><code>MemcachedSessionClient</code> is used to handle sessions in memcached</li>
+<li><code>Resource</code> has useful methods to the resource service</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>bb = <span class="hljs-built_in">require</span> <span class="hljs-string">"bluebird"</span>
+_ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'lodash'</span>)
+Service = <span class="hljs-built_in">require</span>(<span class="hljs-string">"alchemy-ether"</span>)
+Bam = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./bam'</span>)
+MemcachedSessionClient = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./memcached_session_client'</span>)
+Resource = <span class="hljs-built_in">require</span> (<span class="hljs-string">'./resource'</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="logging-functions">Logging Functions</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p><code>log(uuid, message)</code> writes consistent log messages to stdout</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">_log</span> = <span class="hljs-params">(uuid, message)</span> -&gt;</span>
+  <span class="hljs-built_in">console</span>.log <span class="hljs-string">"<span class="hljs-subst">#{(<span class="hljs-keyword">new</span> Date()).toISOString()}</span> - ResourceService <span class="hljs-subst">#{uuid}</span> - <span class="hljs-subst">#{message}</span>"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p><code>_log_error(uuid, message, error)</code> writes consistent error messages to stderr</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">_log_error</span> = <span class="hljs-params">(uuid, message, error = {stack: <span class="hljs-string">''</span>})</span> -&gt;</span>
+  <span class="hljs-built_in">console</span>.error <span class="hljs-string">"<span class="hljs-subst">#{(<span class="hljs-keyword">new</span> Date()).toISOString()}</span> - ResourceService <span class="hljs-subst">#{uuid}</span> - <span class="hljs-subst">#{message}</span> - <span class="hljs-subst">#{error.stack}</span>"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h2 id="resourceservice">ResourceService</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ResourceService</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p><code>constructor(service_name, resource_list, options)</code> takes a name for the service,
+a list of resources, and an object of options including:</p>
+<ul>
+<li><code>logging_endpoint</code> the service queue name for logging</li>
+<li><code>session_client</code> the resource requires a session client</li>
+<li><code>memcached_uri</code> the uri of the memchaced host</li>
+<li><code>memcached_session_namespace</code> the prefix for the session key in memcached</li>
+<li><code>memcached_caller_namespace</code> the prefix for the caller key in memcached</li>
+<li><code>ampq_uri</code> the uri for the RabbitMQ host</li>
+<li><code>service_timeout</code> the timeout set for the resource service</li>
+<li><code>service_queue</code> and <code>response_queue</code> options are passed to the internal alchemy-ether service</li>
+</ul>
+<p>The constructor:</p>
+<ol>
+<li>applies the defaults to the <code>@options</code> object.</li>
+<li>separates the resource list into a lookup object <code>@resources</code></li>
+<li>builds the <code>@session_client</code> from the <code>@options</code></li>
+<li>creates the Alchemy Ether service and sets <code>@_resource_service_fn</code> as the function to process messages.</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  constructor: <span class="hljs-function"><span class="hljs-params">(@service_name, @resource_list = [], @options = {})</span> -&gt;</span>
+    @options = _.defaults(
+      @options,
+      {
+        logging_endpoint: <span class="hljs-string">'platform.logging'</span>
+        session_client: <span class="hljs-literal">true</span>
+        memcached_uri: <span class="hljs-string">'localhost:11211'</span>
+        memcached_session_namespace: <span class="hljs-string">''</span>
+        memcached_caller_namespace: <span class="hljs-string">''</span>
+        ampq_uri: <span class="hljs-string">'amqp://localhost'</span>
+        service_timeout: <span class="hljs-number">1000</span>
+        service_queue: <span class="hljs-literal">true</span>
+        response_queue: <span class="hljs-literal">true</span>
+      }
+    )
+
+    @resources = {}
+    <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> @resource_list
+      @resources[r.name] = r
+
+    @session_client = <span class="hljs-keyword">new</span> MemcachedSessionClient(@options) <span class="hljs-keyword">if</span> @options.session_client
+
+    @service = <span class="hljs-keyword">new</span> Service(@service_name, {
+      service_queue: @options.service_queue
+      response_queue: @options.response_queue
+      ampq_uri: @options.ampq_uri
+      timeout: @options.service_timeout
+      service_fn: @_resource_service_fn
+    })</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h4 id="session-client-methods">Session Client Methods</h4>
+<p>To make it easier to use the Resource Service some methods are wrapped</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+  set_session: <span class="hljs-function"><span class="hljs-params">(session_id, session)</span> -&gt;</span>
+    @session_client.set_session(session_id, session)
+
+  get_session: <span class="hljs-function"><span class="hljs-params">(session_id)</span> -&gt;</span>
+    @session_client.get_session(session_id)
+
+  set_caller: <span class="hljs-function"><span class="hljs-params">(caller_id, caller)</span> -&gt;</span>
+    @session_client.set_caller(caller_id, caller)
+
+  get_caller: <span class="hljs-function"><span class="hljs-params">(caller_id)</span> -&gt;</span>
+    @session_client.get_caller(caller_id)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h4 id="life-cycle">Life Cycle</h4>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p><code>start</code>:</p>
+<ul>
+<li>starts all the resources,</li>
+<li>then connects the <code>session_client</code>,</li>
+<li>then starts the service connecting to RabbitMQ,</li>
+<li>then binds the resources to the <code>resources.exchange</code> to start receiving messages,</li>
+<li>then logs that the resource service has started</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  start: <span class="hljs-function">-&gt;</span>
+    bb.all(@resource_list.map( <span class="hljs-function"><span class="hljs-params">(resource)</span> -&gt;</span> resource.start()))
+    .<span class="hljs-keyword">then</span>( <span class="hljs-function">=&gt;</span>
+      @session_client.connect() <span class="hljs-keyword">if</span> @session_client
+    )
+    .<span class="hljs-keyword">then</span> ( <span class="hljs-function">=&gt;</span>
+      @service.start()
+    )
+    .<span class="hljs-keyword">then</span>( <span class="hljs-function">=&gt;</span>
+      @_bind_resources_to_exchange(@resource_list)
+    )
+    .<span class="hljs-keyword">then</span>( <span class="hljs-function">=&gt;</span>
+      _log @service_name, <span class="hljs-string">"Started with <span class="hljs-subst">#{JSON.stringify(@options)}</span>"</span>
+    )</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p><code>stop</code>:</p>
+<ul>
+<li>stops the service to stop receiving messages (this will finish processing current messages),</li>
+<li>then disconnects the <code>session_client</code>,</li>
+<li>then stops all the resources disconnecting,</li>
+<li>then logs that the resource service has stopped</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  stop: <span class="hljs-function">-&gt;</span>
+    @service.stop()
+    .<span class="hljs-keyword">then</span>( <span class="hljs-function">=&gt;</span>
+      @session_client.disconnect() <span class="hljs-keyword">if</span> @session_client
+    )
+    .<span class="hljs-keyword">then</span>( <span class="hljs-function">=&gt;</span>
+      bb.all(@resource_list.map( <span class="hljs-function"><span class="hljs-params">(resource)</span> -&gt;</span> resource.stop()))
+    )
+    .<span class="hljs-keyword">then</span>( <span class="hljs-function">=&gt;</span>
+      _log @service_name, <span class="hljs-string">"Stopped"</span>
+    )</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p><code>_bind_resources_to_exchange</code> takes a list of resources and binds them to the <code>resources.exchange</code> exchange.</p>
+<p>First it gets the service connection mangers service channel and uses this to assert the queue exists,
+then it loops over all of the resources and binds its <code>binding_key</code> to the queue of <code>@service_name</code>.
+<em>For more information on <code>binding_key</code> read the <a href="./resource.html">Resource Documentation</a></em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _bind_resources_to_exchange: <span class="hljs-function"><span class="hljs-params">(resources)</span> -&gt;</span>
+    @service.connection_manager.get_service_channel()
+    .<span class="hljs-keyword">then</span>( <span class="hljs-function"><span class="hljs-params">(service_channel)</span> =&gt;</span>
+      service_channel.assertExchange(<span class="hljs-string">"resources.exchange"</span>, <span class="hljs-string">'topic'</span>)
+      .<span class="hljs-keyword">then</span>( <span class="hljs-function">=&gt;</span>
+        promises = []
+        <span class="hljs-keyword">for</span> resource <span class="hljs-keyword">in</span> resources
+          promises.push service_channel.bindQueue(@service_name, <span class="hljs-string">"resources.exchange"</span>, resource.binding_key)
+        bb.all(promises)
+      )
+    )</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <h4 id="send-message">Send Message</h4>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p><code>send_message_to_resource</code> sends a message to a resource without needing to know which service it is located in.
+It takes a HTTP payload
+and sends converts the <code>payload.path</code> into a routing key
+then publishing it on the <code>resources.exchange</code> topic exchange.
+This can be used by the</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  send_message_to_resource: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+    @service.send_HTTP_request_message(
+      <span class="hljs-string">"resources.exchange"</span>,
+      Resource.path_to_routing_key(payload.path),
+      payload
+    )</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p><code>send_message_to_service</code> wraps the method from alchemy-ether service for convenience</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  send_message_to_service: <span class="hljs-function"><span class="hljs-params">(service, payload)</span> -&gt;</span>
+    @service.send_message_to_service( service, payload)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <h4 id="process-message">Process Message</h4>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p><code>_resource_service_fn</code> receives a message payload from the alchemy-ether service
+and processes it by first building the calls context with:</p>
+<ol>
+<li><code>_get_resource_name</code>: finding the resource name</li>
+<li><code>_get_interaction_id</code>: find the interaction id</li>
+<li><code>_get_action</code>: get the action (e.g. <code>show</code>)</li>
+<li><code>_get_body</code>: extract and parse the body</li>
+<li><code>_get_query</code>: get the query</li>
+<li><code>_get_path</code>: get the path</li>
+</ol>
+<p>Then it calls <code>_get_session_and_caller</code> to extract the session and caller from the session client.</p>
+<p><code>_validate_context</code> is then used to check that the context is valid.</p>
+<p><code>_is_permitted</code> is used to check the session/caller has permissions to call the resource</p>
+<p><code>_call_resource_action</code> is the function that calls the implemented resource function</p>
+<p>Finally, this method catches all errors and sends them to <code>_log_error_and_respond</code>
+which logs and returns a structured error</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _resource_service_fn: <span class="hljs-function"><span class="hljs-params">(payload)</span> =&gt;</span>
+    context = {
+      resource:       @_get_resource_name(payload)
+      interaction_id: @_get_interaction_id(payload)
+      action:         @_get_action(payload)
+      body:           @_get_body(payload)
+      query:          @_get_query(payload)
+      path:           @_get_path(payload)
+    }
+
+    @_get_session_and_caller(payload)
+    .<span class="hljs-keyword">then</span>(<span class="hljs-function"><span class="hljs-params">(session_and_caller)</span> =&gt;</span>
+      context.session = session_and_caller.session
+      context.caller = session_and_caller.caller
+
+      @_validate_context(context)
+
+      <span class="hljs-keyword">throw</span> Bam.not_allowed() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @_is_permitted(context)
+
+      @_call_resource_action(context)
+    )
+    .<span class="hljs-keyword">catch</span>( <span class="hljs-function"><span class="hljs-params">(err)</span> =&gt;</span>
+      _log_error @service_name, <span class="hljs-string">"Platform Error"</span>, err
+      @_log_error_and_respond(err, context)
+    )</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p><code>_get_resource_name</code> loops over and finds the resource that matches the path</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _get_resource_name: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+    <span class="hljs-keyword">for</span> resource <span class="hljs-keyword">in</span> @resource_list
+      <span class="hljs-keyword">return</span> resource.name <span class="hljs-keyword">if</span> resource.matches_path(payload.path)
+    <span class="hljs-literal">null</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p><code>_get_interaction_id</code> extracts the interaction_id header</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _get_interaction_id: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+    payload.headers[<span class="hljs-string">'x-interaction-id'</span>]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p><code>_get_action</code> matches the HTTP method/verb to the resource action</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _get_action: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+    <span class="hljs-keyword">switch</span> payload.verb
+      <span class="hljs-keyword">when</span> <span class="hljs-string">"POST"</span> <span class="hljs-keyword">then</span> <span class="hljs-string">"create"</span>
+      <span class="hljs-keyword">when</span> <span class="hljs-string">"PATCH"</span> <span class="hljs-keyword">then</span> <span class="hljs-string">"update"</span>
+      <span class="hljs-keyword">when</span> <span class="hljs-string">"DELETE"</span> <span class="hljs-keyword">then</span> <span class="hljs-string">"delete"</span>
+      <span class="hljs-keyword">when</span> <span class="hljs-string">"GET"</span> <span class="hljs-keyword">then</span> <span class="hljs-string">'show'</span>
+      <span class="hljs-keyword">else</span> <span class="hljs-literal">null</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p><code>_get_body</code> tries to parse the message body from JSON</p>
+<ul>
+<li>if it fails returns null</li>
+<li>if no body is found return <code>{}</code></li>
+</ul>
+<p><em>This means that currently only JSON bodies are allowed.</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _get_body: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+    <span class="hljs-keyword">if</span> payload.body
+      <span class="hljs-keyword">try</span>
+        body = JSON.parse(payload.body) <span class="hljs-keyword">if</span> <span class="hljs-keyword">typeof</span> payload.body == <span class="hljs-string">'string'</span>
+        <span class="hljs-keyword">return</span> body
+      <span class="hljs-keyword">catch</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>
+    <span class="hljs-keyword">else</span>
+      <span class="hljs-keyword">return</span> {}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p><code>_get_query</code> extracts the query</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _get_query: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+    payload.query</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p><code>_get_path</code> extracts the path</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _get_path: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+    payload.path</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p><code>_get_session_and_caller</code> uses the wrapped methods from session_client to find the session and caller.</p>
+<ul>
+<li>if no session id return</li>
+<li>fetch the session, if no session or no caller_id return</li>
+<li>fetch the caller, return</li>
+</ul>
+<p>This is designed to make the minimum amount of calls to memcached
+while returning as much data as possible</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _get_session_and_caller: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+    session_and_caller = {session: <span class="hljs-literal">null</span>, caller: <span class="hljs-literal">null</span>}
+    session_id = payload.headers[<span class="hljs-string">'x-session-id'</span>]
+    <span class="hljs-keyword">return</span> bb.<span class="hljs-keyword">try</span>( <span class="hljs-function">=&gt;</span> session_and_caller) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> session_id
+
+    @get_session(session_id)
+    .<span class="hljs-keyword">then</span>( <span class="hljs-function"><span class="hljs-params">(session)</span> =&gt;</span>
+      session_and_caller.session = session
+      <span class="hljs-keyword">return</span> session_and_caller <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> session || <span class="hljs-keyword">not</span> session.caller_id
+
+      @get_caller(session.caller_id)
+      .<span class="hljs-keyword">then</span>( <span class="hljs-function"><span class="hljs-params">(caller)</span> -&gt;</span>
+        session_and_caller.caller = caller
+        session_and_caller
+      )
+    )</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p><code>_validate_context</code> throws errors if the context was not correctly constructed</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _validate_context: <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
+    <span class="hljs-keyword">throw</span> Bam.not_found(context.path) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.resource
+    <span class="hljs-keyword">throw</span> Bam.no_interaction_id() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.interaction_id
+    <span class="hljs-keyword">throw</span> Bam.method_not_allowed() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.action
+    <span class="hljs-keyword">throw</span> Bam.malformed_body() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.body</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p><code>_is_permitted</code> checks that the caller is permitted to call the resource action</p>
+<p>The session and caller look like:</p>
+<pre><code class="lang-json">      Session           |    Caller
+{                       |  {
+ caller_version: 1      |    version: 1
+ caller_id: 1           |    permissions: {...}
+ permissions: {         |  }
+  resources: {          |
+   &quot;Person&quot;: {          |
+    &quot;show&quot;: &quot;allow&quot;,    |
+    &quot;create&quot;: &quot;deny&quot;,   |
+    &quot;else&quot;: &quot;allow&quot;     |
+   }                    |
+  }                     |
+ }                      |
+}                       |
+</code></pre>
+<p>The <code>permission</code> key is checked to see if the caller is permitted
+and either the session or caller may store it.
+In the above example the session is permitted to call the <code>Person</code> resources <code>show</code> action,
+not permitted to call the <code>create</code> action,
+and the <code>else</code> key permits the other actions <code>update</code> and <code>delete</code>.</p>
+<p><strong>Authentication</strong>
+For a caller to be permitted:</p>
+<ol>
+<li>The resource action has attribute <code>public</code> set to true (to allow methods that require no authentication)</li>
+<li>There must be a session and caller</li>
+<li>The <code>session.caller_version</code> must equal <code>caller.version</code> (ensures a session becomes invalid if the caller is updated)</li>
+<li>There must be explicitly declared permissions for the <code>context.resource</code></li>
+<li>If the action has explicit permission it must be <code>allow</code></li>
+<li>If the default <code>else</code> permission is <code>allow</code></li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _is_permitted: <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span> <span class="hljs-keyword">if</span> @resources[context.resource][context.action].public <span class="hljs-comment"># check 1</span>
+
+    session = context.session
+    caller = context.caller
+
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> !session || !caller <span class="hljs-comment"># check 2</span>
+
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> caller.version != session.caller_version <span class="hljs-comment"># check 3</span>
+
+    permissions = caller.permissions || session.permissions
+    resource_permissions = permissions?.resources[context.resource]
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> resource_permissions <span class="hljs-comment"># check 4</span>
+
+    action_permissions = resource_permissions[context.action]
+    <span class="hljs-keyword">if</span> action_permissions
+      <span class="hljs-keyword">if</span> action_permissions == <span class="hljs-string">'allow'</span> <span class="hljs-comment"># check 5</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+      <span class="hljs-keyword">else</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+
+    default_resource_permissions = resource_permissions[<span class="hljs-string">'else'</span>]
+    <span class="hljs-keyword">if</span> default_resource_permissions
+      <span class="hljs-keyword">if</span> default_resource_permissions == <span class="hljs-string">'allow'</span> <span class="hljs-comment"># check 6</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+      <span class="hljs-keyword">else</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p><code>_call_resource_action</code> this method calls the resources action, logs the information, and handles resource errors</p>
+<ol>
+<li>record the start time for the resource action</li>
+<li>log the ‘inbound’ request to the resource</li>
+<li>clone the context to be passed to the resource to stops the resource modifications impacting the resource service</li>
+<li>wrap the call the the resource in a promise, and call the resources action passing it the context</li>
+<li>when the resource action returns the response
+add the response and response_time to the context, log the <code>outbound</code> context and return the response</li>
+<li>If the service causes an error log the error and respond</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _call_resource_action: <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
+    start_time = <span class="hljs-keyword">new</span> Date().getTime()
+    @_log_interaction(context, <span class="hljs-string">'inbound'</span>)
+
+    resource_context = _.cloneDeep(context)
+    bb.<span class="hljs-keyword">try</span>( <span class="hljs-function">=&gt;</span> @resources[context.resource][context.action](resource_context))
+    .<span class="hljs-keyword">then</span>( <span class="hljs-function"><span class="hljs-params">(resource_response)</span> =&gt;</span>
+
+      context.response = resource_response
+      context.response_time = (<span class="hljs-keyword">new</span> Date().getTime()) - start_time
+
+      @_log_interaction(context, <span class="hljs-string">'outbound'</span>)
+
+      resource_response
+    )
+    .<span class="hljs-keyword">catch</span>( <span class="hljs-function"><span class="hljs-params">(err)</span> =&gt;</span>
+      _log_error(@service_name, <span class="hljs-string">"Service Error"</span>, err)
+      @_log_error_and_respond(err, context)
+    )</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p><code>_log_error_and_respond</code> takes an error and the context that created it and generates the correct response body</p>
+<p>First it convert the error to a Bam error if it is not already one.
+Then it assigns the error to the context.
+Then by assigning the reference of the error as the id of the context,
+both the caller and the log will have the same reference to identify the problem.
+Finally, the context is logged as an <code>outbound</code> <code>error</code> and the Bam error is returned to the caller.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _log_error_and_respond: <span class="hljs-function"><span class="hljs-params">(err, context)</span> -&gt;</span>
+    err = Bam.error(err) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err.bam
+
+    context.errors = err
+    context.id = err.body.reference
+    @_log_interaction(context, <span class="hljs-string">'outbound'</span>, <span class="hljs-string">'error'</span>)
+    <span class="hljs-keyword">return</span> err</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p><code>_log_interaction</code> constructs a log event message and from a context, code and level
+and sends it to the logging endpoint queue</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _log_interaction: <span class="hljs-function"><span class="hljs-params">(context, code, level)</span> -&gt;</span>
+    logging_event = {
+      id:                   context.id || Service.generateUUID()
+      interaction_id:       context.interaction_id
+      level:                level || context.level || <span class="hljs-string">'info'</span>
+      component:            context.resource
+      code:                 code || context.code
+      reported_at:          (<span class="hljs-keyword">new</span> Date()).toISOString()
+      data:                 context
+      caller_identity_name: context.caller_identity_name
+      caller_id:            context.caller_id
+      resource:             context.resource
+      action:               context.action
+    }
+
+    @service.send_message(<span class="hljs-string">''</span>, @options.logging_endpoint, logging_event, {type: <span class="hljs-string">'logging_event'</span>})
+
+<span class="hljs-built_in">module</span>.exports = ResourceService</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

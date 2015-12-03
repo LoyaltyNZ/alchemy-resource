@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Alchemy Resource</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          
+          <h1 id="alchemy-resource">Alchemy Resource</h1>
+<p>Alchemy Resource is an opinionated way to use the
+<a href="https://github.com/LoyaltyNZ/alchemy-ether">alchemy-ether</a>
+implementation of the Alchemy Framework to
+create a RESTful, scalable and highly available API.</p>
+<p>The opinions that Alchemy Resource has are:</p>
+<ul>
+<li>Resource APIs have only 4 actions that match directly to HTTP methods:
+<code>GET</code> is <code>show</code>, <code>POST</code> is <code>create</code>, <code>PATCH</code> is <code>update</code> and <code>DELETE</code> is <code>delete</code></li>
+<li>The returned error message structure containing a <code>code</code> that is from a set of well defined error types (e.g. <code>platform.not_found</code>), a human readable <code>message</code>, and a UUID <code>reference</code> so API clients and providers have a shared key to discuss specific errors.</li>
+<li>Service discovery is accomplished using <a href="(https://www.rabbitmq.com/tutorials/tutorial-five-javascript.html">RabbitMQ topic exchanges</a>): A resource registers its path as a binding key on the topic exchange <code>resources.exchange</code>, e.g. <code>/v1/users</code> registers with the binding key <code>v1.users.#</code>, then all messages send to <code>/v1/users</code> are sent with the routing key <code>v1.users</code> which routes messages to the resource.</li>
+<li>Structured Logging is done via a RabbitMQ queue: Alchemy Resource asynchronously sends messages to a logging queue where a specialised service listens and writes to various outputs (database, console …)</li>
+<li>Authentication is accomplished by a caller creating a session and sending it as a header on each request: A <code>Caller</code> is resource that has a set of <code>permissions</code>, e.g. a caller may be permitted to call <code>show</code> on the <code>Users</code> resource but not <code>create</code>. A <code>Session</code> and <code>Caller</code> are both resources that are implemented using Alchemy Resource. To <code>create</code> a session a caller sends its id and secret to the Session resource and the a session with an id and expiry is returned to be used for authentication. <em>Currently sessions are stored memcached, this will likely change in the future</em>.</li>
+</ul>
+<p>Other projects that are in different stages of development and open-sourcing that will enable a complete system are:</p>
+<ul>
+<li>Alchemy <a href="https://github.com/LoyaltyNZ/alchemy-auth">Auth</a> implements the Session and Caller resources and handle the authentication tasks.</li>
+<li>Alchemy <a href="https://github.com/LoyaltyNZ/alchemy-router">Router</a> is a gateway and router that receives HTTP requests and sends them to the correct resource.</li>
+<li>Alchemy <a href="https://github.com/LoyaltyNZ/alchemy-logger">Logger</a> receives structured logging messages and writes them to various outputs including Database, SQS and log entries.</li>
+</ul>
+<h2 id="getting-started">Getting Started</h2>
+<p>To install Alchemy-Ether:</p>
+<pre><code><span class="hljs-built_in">npm</span> install alchemy-resource
+</code></pre><p>This example creates a resource <code>Hello</code> which is located at <code>/hello</code>, then call its <code>show</code> method:</p>
+<pre><code class="lang-coffeescript">AlchemyResource = <span class="hljs-built_in">require</span> <span class="hljs-string">'alchemy-resource'</span>
+
+hello_resource = <span class="hljs-keyword">new</span> AlchemyResource.Resource(<span class="hljs-string">"Hello"</span>, <span class="hljs-string">'/hello'</span>)
+
+<span class="hljs-comment"># The Hello resource implements `show` which takes a body and returns a string of the name</span>
+hello_resource.show = <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
+  {body: <span class="hljs-string">"Hello <span class="hljs-subst">#{context.body.name}</span>"</span>}
+<span class="hljs-comment"># Make show action public so no authentication is needed</span>
+hello_resource.show.public = <span class="hljs-literal">true</span>
+
+<span class="hljs-comment"># The resource service is created which contains the resource</span>
+service = <span class="hljs-keyword">new</span> AlchemyResource.ResourceService(<span class="hljs-string">'hello.service'</span>, [hello_resource])
+
+<span class="hljs-comment"># Start the Resource Service</span>
+service.start()
+.<span class="hljs-keyword">then</span>( <span class="hljs-function">-&gt;</span>
+  <span class="hljs-comment"># Service sending message to the resource,</span>
+  <span class="hljs-comment"># it only knows the path and does not know where the service lives.</span>
+  service.send_message_to_resource({
+    path: <span class="hljs-string">'/hello'</span>
+    body: JSON.stringify({ name: <span class="hljs-string">"Alice"</span> })
+    verb: <span class="hljs-string">"GET"</span>
+  })
+)
+.<span class="hljs-keyword">then</span>( <span class="hljs-function"><span class="hljs-params">(response)</span> -&gt;</span>
+  <span class="hljs-built_in">console</span>.log(response.body) <span class="hljs-comment"># "Hello Alice"</span>
+)
+.<span class="hljs-keyword">finally</span>( <span class="hljs-function">-&gt;</span>
+  service.stop()
+)
+</code></pre>
+<h2 id="examples">Examples</h2>
+<ul>
+<li><a href="./examples/example_1_send_message.html">Sending a message to a Resource</a></li>
+<li><a href="./examples/exmaple_2_authentication.html">Authentication of a Resource</a></li>
+</ul>
+<h2 id="documentation">Documentation</h2>
+<p><em>This Alchemy Resource documentation is generated with <a href="https://jashkenas.github.io/docco/">docco</a> from the annotated source code.</em></p>
+<p>The Alchemy Resource package exports:</p>
+<ol>
+<li><a href="./src/resource.html">Resource</a> the interface that is overridden to implement Resources.</li>
+<li><a href="./src/resource_service.html">ResourceService</a> contains many resources and manages their discovery, authentication and logging.</li>
+<li><a href="./src/bam.html">Bam</a> (a homage to <a href="https://www.npmjs.com/package/boom">Boom</a>) contains the formatted errors to be returned.</li>
+<li><a href="./src/memcached_session_client.html">MemcachedSessionClient</a> the session client for memcached.</li>
+</ol>
+
+          
+            <div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = {
+  Resource:                <span class="hljs-built_in">require</span>(<span class="hljs-string">'./resource'</span>)
+  ResourceService:         <span class="hljs-built_in">require</span>(<span class="hljs-string">'./resource_service'</span>)
+  Bam:                     <span class="hljs-built_in">require</span>(<span class="hljs-string">'./bam'</span>)
+  MemcachedSessionClient:  <span class="hljs-built_in">require</span>(<span class="hljs-string">'./memcached_session_client'</span>)
+}</pre></div>
+          
+        
+
+        
+      </div>
+
+      
+        
+        <h2 id="contributors">Contributors</h2>
+<ul>
+<li>Graham Jenson</li>
+<li>David Mitchell</li>
+<li>Wayne Hoover</li>
+</ul>
+<h2 id="changelog">Changelog</h2>
+<p>????-??-?? - Open Sourced  - Graham</p>
+
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
