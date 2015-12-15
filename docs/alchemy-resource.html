@@ -44,7 +44,7 @@ hello_resource = <span class="hljs-keyword">new</span> AlchemyResource.Resource(
 
 <span class="hljs-comment"># The Hello resource implements `show` which takes a body and returns a string of the name</span>
 hello_resource.show = <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
-  {body: <span class="hljs-string">"Hello <span class="hljs-subst">#{context.body.name}</span>"</span>}
+  {<span class="hljs-attribute">body</span>: <span class="hljs-string">"Hello <span class="hljs-subst">#{context.body.name}</span>"</span>}
 <span class="hljs-comment"># Make show action public so no authentication is needed</span>
 hello_resource.show.public = <span class="hljs-literal">true</span>
 
@@ -57,9 +57,9 @@ service.start()
   <span class="hljs-comment"># Service sending message to the resource,</span>
   <span class="hljs-comment"># it only knows the path and does not know where the service lives.</span>
   service.send_message_to_resource({
-    path: <span class="hljs-string">'/hello'</span>
-    body: JSON.stringify({ name: <span class="hljs-string">"Alice"</span> })
-    verb: <span class="hljs-string">"GET"</span>
+    <span class="hljs-attribute">path</span>: <span class="hljs-string">'/hello'</span>
+    <span class="hljs-attribute">body</span>: JSON.stringify({ <span class="hljs-attribute">name</span>: <span class="hljs-string">"Alice"</span> })
+    <span class="hljs-attribute">verb</span>: <span class="hljs-string">"GET"</span>
   })
 )
 .<span class="hljs-keyword">then</span>( <span class="hljs-function"><span class="hljs-params">(response)</span> -&gt;</span>
@@ -86,10 +86,10 @@ service.start()
 
           
             <div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = {
-  Resource:                <span class="hljs-built_in">require</span>(<span class="hljs-string">'./resource'</span>)
-  ResourceService:         <span class="hljs-built_in">require</span>(<span class="hljs-string">'./resource_service'</span>)
-  Bam:                     <span class="hljs-built_in">require</span>(<span class="hljs-string">'./bam'</span>)
-  MemcachedSessionClient:  <span class="hljs-built_in">require</span>(<span class="hljs-string">'./memcached_session_client'</span>)
+  <span class="hljs-attribute">Resource</span>:                <span class="hljs-built_in">require</span>(<span class="hljs-string">'./resource'</span>)
+  <span class="hljs-attribute">ResourceService</span>:         <span class="hljs-built_in">require</span>(<span class="hljs-string">'./resource_service'</span>)
+  <span class="hljs-attribute">Bam</span>:                     <span class="hljs-built_in">require</span>(<span class="hljs-string">'./bam'</span>)
+  <span class="hljs-attribute">MemcachedSessionClient</span>:  <span class="hljs-built_in">require</span>(<span class="hljs-string">'./memcached_session_client'</span>)
 }</pre></div>
           
         
@@ -106,7 +106,7 @@ service.start()
 <li>Wayne Hoover</li>
 </ul>
 <h2 id="changelog">Changelog</h2>
-<p>????-??-?? - Open Sourced  - Graham</p>
+<p>2015-12-3 - Open Sourced  - Graham &amp; Wayne</p>
 
         
       
