@@ -117,15 +117,15 @@ The keys for the <code>options</code> are:</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  constructor: <span class="hljs-function"><span class="hljs-params">(@options = {})</span> -&gt;</span>
-    @options = _.defaults(
-      @options,
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@options</span> = {})</span> -&gt;</span>
+    <span class="hljs-property">@options</span> = _.defaults(
+      <span class="hljs-property">@options</span>,
       {
-        memcached_uri: <span class="hljs-string">'localhost:11211'</span>
-        memcached_retries: <span class="hljs-number">2</span>
-        memcached_session_namespace: <span class="hljs-string">''</span>
-        memcached_caller_namespace: <span class="hljs-string">''</span>
-        memcached_ttl: <span class="hljs-number">86400</span> <span class="hljs-comment"># 24 hours for session to time out</span>
+        <span class="hljs-attribute">memcached_uri</span>: <span class="hljs-string">'localhost:11211'</span>
+        <span class="hljs-attribute">memcached_retries</span>: <span class="hljs-number">2</span>
+        <span class="hljs-attribute">memcached_session_namespace</span>: <span class="hljs-string">''</span>
+        <span class="hljs-attribute">memcached_caller_namespace</span>: <span class="hljs-string">''</span>
+        <span class="hljs-attribute">memcached_ttl</span>: <span class="hljs-number">86400</span> <span class="hljs-comment"># 24 hours for session to time out</span>
       }
     )</pre></div></div>
             
@@ -143,17 +143,17 @@ It returns a promise that it has connected successfully.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  connect: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span>
-    @_memcached = <span class="hljs-keyword">new</span> Memcached(@options.memcached_uri, {
-      retries: @options.memcached_retries,
-      timeout: <span class="hljs-number">200</span>,
-      remove: <span class="hljs-literal">true</span>,
-      failures:<span class="hljs-number">2</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">connect</span>: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span>
+    <span class="hljs-property">@_memcached</span> = <span class="hljs-keyword">new</span> Memcached(<span class="hljs-property">@options</span>.memcached_uri, {
+      <span class="hljs-attribute">retries</span>: <span class="hljs-property">@options</span>.memcached_retries,
+      <span class="hljs-attribute">timeout</span>: <span class="hljs-number">200</span>,
+      <span class="hljs-attribute">remove</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attribute">failures</span>:<span class="hljs-number">2</span>
     })
 
-    @_memcached = bb.promisifyAll(@_memcached)
+    <span class="hljs-property">@_memcached</span> = bb.promisifyAll(<span class="hljs-property">@_memcached</span>)
 
-    @_memcached.statsAsync()
+    <span class="hljs-property">@_memcached</span>.statsAsync()
     .<span class="hljs-keyword">then</span>( <span class="hljs-function"><span class="hljs-params">(data)</span> =&gt;</span>
       @
     )
@@ -174,7 +174,7 @@ It returns a promise that it has connected successfully.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  disconnect: <span class="hljs-function">=&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">disconnect</span>: <span class="hljs-function">=&gt;</span>
     <span class="hljs-keyword">delete</span> @[<span class="hljs-string">'_memcached'</span>]
     bb.<span class="hljs-keyword">try</span>( <span class="hljs-function">-&gt;</span> )</pre></div></div>
             
@@ -191,8 +191,8 @@ It returns a promise that it has connected successfully.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  get_session: <span class="hljs-function"><span class="hljs-params">(session_id)</span> =&gt;</span>
-    @_memcached.getAsync(<span class="hljs-string">"<span class="hljs-subst">#{@options.memcached_session_namespace}</span><span class="hljs-subst">#{session_id}</span>"</span>)
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">get_session</span>: <span class="hljs-function"><span class="hljs-params">(session_id)</span> =&gt;</span>
+    <span class="hljs-property">@_memcached</span>.getAsync(<span class="hljs-string">"<span class="hljs-subst">#{<span class="hljs-property">@options</span>.memcached_session_namespace}</span><span class="hljs-subst">#{session_id}</span>"</span>)
     .<span class="hljs-keyword">then</span>( <span class="hljs-function"><span class="hljs-params">(data)</span> -&gt;</span>
       <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span> <span class="hljs-keyword">unless</span> data?
       <span class="hljs-keyword">try</span>
@@ -214,8 +214,8 @@ It returns a promise that it has connected successfully.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  get_caller: <span class="hljs-function"><span class="hljs-params">(caller_id)</span> =&gt;</span>
-    @_memcached.getAsync(<span class="hljs-string">"<span class="hljs-subst">#{@options.memcached_caller_namespace}</span><span class="hljs-subst">#{caller_id}</span>"</span>)
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">get_caller</span>: <span class="hljs-function"><span class="hljs-params">(caller_id)</span> =&gt;</span>
+    <span class="hljs-property">@_memcached</span>.getAsync(<span class="hljs-string">"<span class="hljs-subst">#{<span class="hljs-property">@options</span>.memcached_caller_namespace}</span><span class="hljs-subst">#{caller_id}</span>"</span>)
     .<span class="hljs-keyword">then</span>( <span class="hljs-function"><span class="hljs-params">(data)</span> -&gt;</span>
       <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span> <span class="hljs-keyword">unless</span> data?
       <span class="hljs-keyword">try</span>
@@ -237,8 +237,8 @@ It returns a promise that it has connected successfully.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  set_session: <span class="hljs-function"><span class="hljs-params">(session_id, session = {})</span> -&gt;</span>
-    @_memcached.setAsync(<span class="hljs-string">"<span class="hljs-subst">#{@options.memcached_session_namespace}</span><span class="hljs-subst">#{session_id}</span>"</span>, JSON.stringify(session), @options.memcached_ttl)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">set_session</span>: <span class="hljs-function"><span class="hljs-params">(session_id, session = {})</span> -&gt;</span>
+    <span class="hljs-property">@_memcached</span>.setAsync(<span class="hljs-string">"<span class="hljs-subst">#{<span class="hljs-property">@options</span>.memcached_session_namespace}</span><span class="hljs-subst">#{session_id}</span>"</span>, JSON.stringify(session), <span class="hljs-property">@options</span>.memcached_ttl)</pre></div></div>
             
         </li>
         
@@ -253,8 +253,8 @@ It returns a promise that it has connected successfully.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  set_caller: <span class="hljs-function"><span class="hljs-params">(caller_id, caller = {})</span> -&gt;</span>
-    @_memcached.setAsync(<span class="hljs-string">"<span class="hljs-subst">#{@options.memcached_caller_namespace}</span><span class="hljs-subst">#{caller_id}</span>"</span>, JSON.stringify(caller), @options.memcached_ttl)
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">set_caller</span>: <span class="hljs-function"><span class="hljs-params">(caller_id, caller = {})</span> -&gt;</span>
+    <span class="hljs-property">@_memcached</span>.setAsync(<span class="hljs-string">"<span class="hljs-subst">#{<span class="hljs-property">@options</span>.memcached_caller_namespace}</span><span class="hljs-subst">#{caller_id}</span>"</span>, JSON.stringify(caller), <span class="hljs-property">@options</span>.memcached_ttl)
 
 
 <span class="hljs-built_in">module</span>.exports = MemcachedSessionClient</pre></div></div>

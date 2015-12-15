@@ -99,120 +99,120 @@ Bam = {}</pre></div></div>
     <span class="hljs-keyword">switch</span> deet.type
       <span class="hljs-keyword">when</span> <span class="hljs-string">'any.required'</span>
         errors.push {
-          code: <span class="hljs-string">"generic.required_field_missing"</span>
-          message: deet.message
+          <span class="hljs-attribute">code</span>: <span class="hljs-string">"generic.required_field_missing"</span>
+          <span class="hljs-attribute">message</span>: deet.message
         }
       <span class="hljs-keyword">when</span> <span class="hljs-string">'object.missing'</span>
         errors.push {
-          code: <span class="hljs-string">"generic.required_field_missing"</span>
-          message: deet.message
+          <span class="hljs-attribute">code</span>: <span class="hljs-string">"generic.required_field_missing"</span>
+          <span class="hljs-attribute">message</span>: deet.message
         }
       <span class="hljs-keyword">when</span> <span class="hljs-string">'string.regex.base'</span>
         errors.push {
-          code: <span class="hljs-string">"generic.invalid_string"</span>
-          message: deet.message
+          <span class="hljs-attribute">code</span>: <span class="hljs-string">"generic.invalid_string"</span>
+          <span class="hljs-attribute">message</span>: deet.message
         }
       <span class="hljs-keyword">else</span>
         errors.push {
-          code: <span class="hljs-string">"generic.unknown"</span>
-          message: deet.message
-          type: deet.type
+          <span class="hljs-attribute">code</span>: <span class="hljs-string">"generic.unknown"</span>
+          <span class="hljs-attribute">message</span>: deet.message
+          <span class="hljs-attribute">type</span>: deet.type
         }
 
   {
-    bam: <span class="hljs-literal">true</span>
-    status_code: <span class="hljs-number">422</span>
-    body: {
-      errors: errors
-      reference: generateUUID()
+    <span class="hljs-attribute">bam</span>: <span class="hljs-literal">true</span>
+    <span class="hljs-attribute">status_code</span>: <span class="hljs-number">422</span>
+    <span class="hljs-attribute">body</span>: {
+      <span class="hljs-attribute">errors</span>: errors
+      <span class="hljs-attribute">reference</span>: generateUUID()
     }
   }
 
 
 Bam.malformed_body = <span class="hljs-function">-&gt;</span>
   {
-    bam: <span class="hljs-literal">true</span>
-    status_code: <span class="hljs-number">422</span>
-    body: {
-      code: <span class="hljs-string">"platform.malformed"</span>
-      message: <span class="hljs-string">"malformed body data"</span>
-      reference: generateUUID()
+    <span class="hljs-attribute">bam</span>: <span class="hljs-literal">true</span>
+    <span class="hljs-attribute">status_code</span>: <span class="hljs-number">422</span>
+    <span class="hljs-attribute">body</span>: {
+      <span class="hljs-attribute">code</span>: <span class="hljs-string">"platform.malformed"</span>
+      <span class="hljs-attribute">message</span>: <span class="hljs-string">"malformed body data"</span>
+      <span class="hljs-attribute">reference</span>: generateUUID()
     }
   }
 
 Bam.method_not_allowed = <span class="hljs-function">-&gt;</span>
   {
-    bam: <span class="hljs-literal">true</span>
-    status_code: <span class="hljs-number">405</span>
-    body: {
-      code: <span class="hljs-string">"platform.method_not_allowed"</span>
-      message: <span class="hljs-string">"not allowed"</span>
-      reference: generateUUID()
+    <span class="hljs-attribute">bam</span>: <span class="hljs-literal">true</span>
+    <span class="hljs-attribute">status_code</span>: <span class="hljs-number">405</span>
+    <span class="hljs-attribute">body</span>: {
+      <span class="hljs-attribute">code</span>: <span class="hljs-string">"platform.method_not_allowed"</span>
+      <span class="hljs-attribute">message</span>: <span class="hljs-string">"not allowed"</span>
+      <span class="hljs-attribute">reference</span>: generateUUID()
     }
   }
 
 Bam.no_interaction_id = <span class="hljs-function">-&gt;</span>
   {
-    bam: <span class="hljs-literal">true</span>
-    status_code: <span class="hljs-number">422</span>
-    body: {
-      code: <span class="hljs-string">"platform.no_interaction_id"</span>
-      message: <span class="hljs-string">"no interaction id"</span>
-      reference: generateUUID()
+    <span class="hljs-attribute">bam</span>: <span class="hljs-literal">true</span>
+    <span class="hljs-attribute">status_code</span>: <span class="hljs-number">422</span>
+    <span class="hljs-attribute">body</span>: {
+      <span class="hljs-attribute">code</span>: <span class="hljs-string">"platform.no_interaction_id"</span>
+      <span class="hljs-attribute">message</span>: <span class="hljs-string">"no interaction id"</span>
+      <span class="hljs-attribute">reference</span>: generateUUID()
     }
   }
 
 Bam.required_field_missing = <span class="hljs-function"><span class="hljs-params">(message)</span> -&gt;</span>
   {
-    bam: <span class="hljs-literal">true</span>
-    status_code: <span class="hljs-number">422</span>
-    body: {
-      code: <span class="hljs-string">"generic.required_field_missing"</span>
-      message: <span class="hljs-string">"<span class="hljs-subst">#{message}</span>"</span>
-      reference: generateUUID()
+    <span class="hljs-attribute">bam</span>: <span class="hljs-literal">true</span>
+    <span class="hljs-attribute">status_code</span>: <span class="hljs-number">422</span>
+    <span class="hljs-attribute">body</span>: {
+      <span class="hljs-attribute">code</span>: <span class="hljs-string">"generic.required_field_missing"</span>
+      <span class="hljs-attribute">message</span>: <span class="hljs-string">"<span class="hljs-subst">#{message}</span>"</span>
+      <span class="hljs-attribute">reference</span>: generateUUID()
     }
   }
 
 Bam.not_allowed = <span class="hljs-function">-&gt;</span>
   {
-    bam: <span class="hljs-literal">true</span>
-    status_code: <span class="hljs-number">403</span>
-    body: {
-      code: <span class="hljs-string">"platform.forbidden"</span>
-      message: <span class="hljs-string">"not allowed"</span>
-      reference: generateUUID()
+    <span class="hljs-attribute">bam</span>: <span class="hljs-literal">true</span>
+    <span class="hljs-attribute">status_code</span>: <span class="hljs-number">403</span>
+    <span class="hljs-attribute">body</span>: {
+      <span class="hljs-attribute">code</span>: <span class="hljs-string">"platform.forbidden"</span>
+      <span class="hljs-attribute">message</span>: <span class="hljs-string">"not allowed"</span>
+      <span class="hljs-attribute">reference</span>: generateUUID()
     }
   }
 
 Bam.not_found = <span class="hljs-function"><span class="hljs-params">(resource)</span> -&gt;</span>
   {
-    bam: <span class="hljs-literal">true</span>
-    status_code: <span class="hljs-number">404</span>
-    body: {
-      code: <span class="hljs-string">"platform.not_found"</span>
-      message: <span class="hljs-string">"<span class="hljs-subst">#{resource}</span> not found"</span>
-      reference: generateUUID()
+    <span class="hljs-attribute">bam</span>: <span class="hljs-literal">true</span>
+    <span class="hljs-attribute">status_code</span>: <span class="hljs-number">404</span>
+    <span class="hljs-attribute">body</span>: {
+      <span class="hljs-attribute">code</span>: <span class="hljs-string">"platform.not_found"</span>
+      <span class="hljs-attribute">message</span>: <span class="hljs-string">"<span class="hljs-subst">#{resource}</span> not found"</span>
+      <span class="hljs-attribute">reference</span>: generateUUID()
     }
   }
 
 Bam.exists = <span class="hljs-function"><span class="hljs-params">(resource)</span> -&gt;</span>
   {
-    bam: <span class="hljs-literal">true</span>
-    status_code: <span class="hljs-number">422</span>
-    body: {
-      code: <span class="hljs-string">"platform.exists"</span>
-      message: <span class="hljs-string">"<span class="hljs-subst">#{resource}</span> already exists"</span>
-      reference: generateUUID()
+    <span class="hljs-attribute">bam</span>: <span class="hljs-literal">true</span>
+    <span class="hljs-attribute">status_code</span>: <span class="hljs-number">422</span>
+    <span class="hljs-attribute">body</span>: {
+      <span class="hljs-attribute">code</span>: <span class="hljs-string">"platform.exists"</span>
+      <span class="hljs-attribute">message</span>: <span class="hljs-string">"<span class="hljs-subst">#{resource}</span> already exists"</span>
+      <span class="hljs-attribute">reference</span>: generateUUID()
     }
   }
 
 Bam.error = <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
   error = {
-    bam: <span class="hljs-literal">true</span>
-    status_code: <span class="hljs-number">500</span>
-    body: {
-      code: <span class="hljs-string">'platform.fault'</span>
-      message: <span class="hljs-string">'An unexpected error occurred'</span>
+    <span class="hljs-attribute">bam</span>: <span class="hljs-literal">true</span>
+    <span class="hljs-attribute">status_code</span>: <span class="hljs-number">500</span>
+    <span class="hljs-attribute">body</span>: {
+      <span class="hljs-attribute">code</span>: <span class="hljs-string">'platform.fault'</span>
+      <span class="hljs-attribute">message</span>: <span class="hljs-string">'An unexpected error occurred'</span>
 
     }
   }

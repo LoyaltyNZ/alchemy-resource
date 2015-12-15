@@ -178,34 +178,34 @@ a list of resources, and an object of options including:</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  constructor: <span class="hljs-function"><span class="hljs-params">(@service_name, @resource_list = [], @options = {})</span> -&gt;</span>
-    @options = _.defaults(
-      @options,
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@service_name</span>, <span class="hljs-property">@resource_list</span> = [], <span class="hljs-property">@options</span> = {})</span> -&gt;</span>
+    <span class="hljs-property">@options</span> = _.defaults(
+      <span class="hljs-property">@options</span>,
       {
-        logging_endpoint: <span class="hljs-string">'platform.logging'</span>
-        session_client: <span class="hljs-literal">true</span>
-        memcached_uri: <span class="hljs-string">'localhost:11211'</span>
-        memcached_session_namespace: <span class="hljs-string">''</span>
-        memcached_caller_namespace: <span class="hljs-string">''</span>
-        ampq_uri: <span class="hljs-string">'amqp://localhost'</span>
-        service_timeout: <span class="hljs-number">1000</span>
-        service_queue: <span class="hljs-literal">true</span>
-        response_queue: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">logging_endpoint</span>: <span class="hljs-string">'platform.logging'</span>
+        <span class="hljs-attribute">session_client</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">memcached_uri</span>: <span class="hljs-string">'localhost:11211'</span>
+        <span class="hljs-attribute">memcached_session_namespace</span>: <span class="hljs-string">''</span>
+        <span class="hljs-attribute">memcached_caller_namespace</span>: <span class="hljs-string">''</span>
+        <span class="hljs-attribute">ampq_uri</span>: <span class="hljs-string">'amqp://localhost'</span>
+        <span class="hljs-attribute">service_timeout</span>: <span class="hljs-number">1000</span>
+        <span class="hljs-attribute">service_queue</span>: <span class="hljs-literal">true</span>
+        <span class="hljs-attribute">response_queue</span>: <span class="hljs-literal">true</span>
       }
     )
 
-    @resources = {}
-    <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> @resource_list
-      @resources[r.name] = r
+    <span class="hljs-property">@resources</span> = {}
+    <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> <span class="hljs-property">@resource_list</span>
+      <span class="hljs-property">@resources</span>[r.name] = r
 
-    @session_client = <span class="hljs-keyword">new</span> MemcachedSessionClient(@options) <span class="hljs-keyword">if</span> @options.session_client
+    <span class="hljs-property">@session_client</span> = <span class="hljs-keyword">new</span> MemcachedSessionClient(<span class="hljs-property">@options</span>) <span class="hljs-keyword">if</span> <span class="hljs-property">@options</span>.session_client
 
-    @service = <span class="hljs-keyword">new</span> Service(@service_name, {
-      service_queue: @options.service_queue
-      response_queue: @options.response_queue
-      ampq_uri: @options.ampq_uri
-      timeout: @options.service_timeout
-      service_fn: @_resource_service_fn
+    <span class="hljs-property">@service</span> = <span class="hljs-keyword">new</span> Service(<span class="hljs-property">@service_name</span>, {
+      <span class="hljs-attribute">service_queue</span>: <span class="hljs-property">@options</span>.service_queue
+      <span class="hljs-attribute">response_queue</span>: <span class="hljs-property">@options</span>.response_queue
+      <span class="hljs-attribute">ampq_uri</span>: <span class="hljs-property">@options</span>.ampq_uri
+      <span class="hljs-attribute">timeout</span>: <span class="hljs-property">@options</span>.service_timeout
+      <span class="hljs-attribute">service_fn</span>: <span class="hljs-property">@_resource_service_fn</span>
     })</pre></div></div>
             
         </li>
@@ -223,17 +223,17 @@ a list of resources, and an object of options including:</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>
-  set_session: <span class="hljs-function"><span class="hljs-params">(session_id, session)</span> -&gt;</span>
-    @session_client.set_session(session_id, session)
+  <span class="hljs-attribute">set_session</span>: <span class="hljs-function"><span class="hljs-params">(session_id, session)</span> -&gt;</span>
+    <span class="hljs-property">@session_client</span>.set_session(session_id, session)
 
-  get_session: <span class="hljs-function"><span class="hljs-params">(session_id)</span> -&gt;</span>
-    @session_client.get_session(session_id)
+  <span class="hljs-attribute">get_session</span>: <span class="hljs-function"><span class="hljs-params">(session_id)</span> -&gt;</span>
+    <span class="hljs-property">@session_client</span>.get_session(session_id)
 
-  set_caller: <span class="hljs-function"><span class="hljs-params">(caller_id, caller)</span> -&gt;</span>
-    @session_client.set_caller(caller_id, caller)
+  <span class="hljs-attribute">set_caller</span>: <span class="hljs-function"><span class="hljs-params">(caller_id, caller)</span> -&gt;</span>
+    <span class="hljs-property">@session_client</span>.set_caller(caller_id, caller)
 
-  get_caller: <span class="hljs-function"><span class="hljs-params">(caller_id)</span> -&gt;</span>
-    @session_client.get_caller(caller_id)</pre></div></div>
+  <span class="hljs-attribute">get_caller</span>: <span class="hljs-function"><span class="hljs-params">(caller_id)</span> -&gt;</span>
+    <span class="hljs-property">@session_client</span>.get_caller(caller_id)</pre></div></div>
             
         </li>
         
@@ -268,19 +268,19 @@ a list of resources, and an object of options including:</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  start: <span class="hljs-function">-&gt;</span>
-    bb.all(@resource_list.map( <span class="hljs-function"><span class="hljs-params">(resource)</span> -&gt;</span> resource.start()))
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">start</span>: <span class="hljs-function">-&gt;</span>
+    bb.all(<span class="hljs-property">@resource_list</span>.map( <span class="hljs-function"><span class="hljs-params">(resource)</span> -&gt;</span> resource.start()))
     .<span class="hljs-keyword">then</span>( <span class="hljs-function">=&gt;</span>
-      @session_client.connect() <span class="hljs-keyword">if</span> @session_client
+      <span class="hljs-property">@session_client</span>.connect() <span class="hljs-keyword">if</span> <span class="hljs-property">@session_client</span>
     )
     .<span class="hljs-keyword">then</span> ( <span class="hljs-function">=&gt;</span>
-      @service.start()
+      <span class="hljs-property">@service</span>.start()
     )
     .<span class="hljs-keyword">then</span>( <span class="hljs-function">=&gt;</span>
-      @_bind_resources_to_exchange(@resource_list)
+      <span class="hljs-property">@_bind_resources_to_exchange</span>(<span class="hljs-property">@resource_list</span>)
     )
     .<span class="hljs-keyword">then</span>( <span class="hljs-function">=&gt;</span>
-      _log @service_name, <span class="hljs-string">"Started with <span class="hljs-subst">#{JSON.stringify(@options)}</span>"</span>
+      _log <span class="hljs-property">@service_name</span>, <span class="hljs-string">"Started with <span class="hljs-subst">#{JSON.stringify(<span class="hljs-property">@options</span>)}</span>"</span>
     )</pre></div></div>
             
         </li>
@@ -302,16 +302,16 @@ a list of resources, and an object of options including:</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  stop: <span class="hljs-function">-&gt;</span>
-    @service.stop()
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">stop</span>: <span class="hljs-function">-&gt;</span>
+    <span class="hljs-property">@service</span>.stop()
     .<span class="hljs-keyword">then</span>( <span class="hljs-function">=&gt;</span>
-      @session_client.disconnect() <span class="hljs-keyword">if</span> @session_client
+      <span class="hljs-property">@session_client</span>.disconnect() <span class="hljs-keyword">if</span> <span class="hljs-property">@session_client</span>
     )
     .<span class="hljs-keyword">then</span>( <span class="hljs-function">=&gt;</span>
-      bb.all(@resource_list.map( <span class="hljs-function"><span class="hljs-params">(resource)</span> -&gt;</span> resource.stop()))
+      bb.all(<span class="hljs-property">@resource_list</span>.map( <span class="hljs-function"><span class="hljs-params">(resource)</span> -&gt;</span> resource.stop()))
     )
     .<span class="hljs-keyword">then</span>( <span class="hljs-function">=&gt;</span>
-      _log @service_name, <span class="hljs-string">"Stopped"</span>
+      _log <span class="hljs-property">@service_name</span>, <span class="hljs-string">"Stopped"</span>
     )</pre></div></div>
             
         </li>
@@ -330,14 +330,14 @@ then it loops over all of the resources and binds its <code>binding_key</code> t
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _bind_resources_to_exchange: <span class="hljs-function"><span class="hljs-params">(resources)</span> -&gt;</span>
-    @service.connection_manager.get_service_channel()
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_bind_resources_to_exchange</span>: <span class="hljs-function"><span class="hljs-params">(resources)</span> -&gt;</span>
+    <span class="hljs-property">@service</span>.connection_manager.get_service_channel()
     .<span class="hljs-keyword">then</span>( <span class="hljs-function"><span class="hljs-params">(service_channel)</span> =&gt;</span>
       service_channel.assertExchange(<span class="hljs-string">"resources.exchange"</span>, <span class="hljs-string">'topic'</span>)
       .<span class="hljs-keyword">then</span>( <span class="hljs-function">=&gt;</span>
         promises = []
         <span class="hljs-keyword">for</span> resource <span class="hljs-keyword">in</span> resources
-          promises.push service_channel.bindQueue(@service_name, <span class="hljs-string">"resources.exchange"</span>, resource.binding_key)
+          promises.push service_channel.bindQueue(<span class="hljs-property">@service_name</span>, <span class="hljs-string">"resources.exchange"</span>, resource.binding_key)
         bb.all(promises)
       )
     )</pre></div></div>
@@ -372,8 +372,8 @@ This can be used by the</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  send_message_to_resource: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
-    @service.send_HTTP_request_message(
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">send_message_to_resource</span>: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+    <span class="hljs-property">@service</span>.send_HTTP_request_message(
       <span class="hljs-string">"resources.exchange"</span>,
       Resource.path_to_routing_key(payload.path),
       payload
@@ -392,8 +392,8 @@ This can be used by the</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  send_message_to_service: <span class="hljs-function"><span class="hljs-params">(service, payload)</span> -&gt;</span>
-    @service.send_message_to_service( service, payload)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">send_message_to_service</span>: <span class="hljs-function"><span class="hljs-params">(service, payload)</span> -&gt;</span>
+    <span class="hljs-property">@service</span>.send_message_to_service( service, payload)</pre></div></div>
             
         </li>
         
@@ -436,30 +436,30 @@ which logs and returns a structured error</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _resource_service_fn: <span class="hljs-function"><span class="hljs-params">(payload)</span> =&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_resource_service_fn</span>: <span class="hljs-function"><span class="hljs-params">(payload)</span> =&gt;</span>
     context = {
-      resource:       @_get_resource_name(payload)
-      interaction_id: @_get_interaction_id(payload)
-      action:         @_get_action(payload)
-      body:           @_get_body(payload)
-      query:          @_get_query(payload)
-      path:           @_get_path(payload)
+      <span class="hljs-attribute">resource</span>:       <span class="hljs-property">@_get_resource_name</span>(payload)
+      <span class="hljs-attribute">interaction_id</span>: <span class="hljs-property">@_get_interaction_id</span>(payload)
+      <span class="hljs-attribute">action</span>:         <span class="hljs-property">@_get_action</span>(payload)
+      <span class="hljs-attribute">body</span>:           <span class="hljs-property">@_get_body</span>(payload)
+      <span class="hljs-attribute">query</span>:          <span class="hljs-property">@_get_query</span>(payload)
+      <span class="hljs-attribute">path</span>:           <span class="hljs-property">@_get_path</span>(payload)
     }
 
-    @_get_session_and_caller(payload)
+    <span class="hljs-property">@_get_session_and_caller</span>(payload)
     .<span class="hljs-keyword">then</span>(<span class="hljs-function"><span class="hljs-params">(session_and_caller)</span> =&gt;</span>
       context.session = session_and_caller.session
       context.caller = session_and_caller.caller
 
-      @_validate_context(context)
+      <span class="hljs-property">@_validate_context</span>(context)
 
-      <span class="hljs-keyword">throw</span> Bam.not_allowed() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> @_is_permitted(context)
+      <span class="hljs-keyword">throw</span> Bam.not_allowed() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@_is_permitted</span>(context)
 
-      @_call_resource_action(context)
+      <span class="hljs-property">@_call_resource_action</span>(context)
     )
     .<span class="hljs-keyword">catch</span>( <span class="hljs-function"><span class="hljs-params">(err)</span> =&gt;</span>
-      _log_error @service_name, <span class="hljs-string">"Platform Error"</span>, err
-      @_log_error_and_respond(err, context)
+      _log_error <span class="hljs-property">@service_name</span>, <span class="hljs-string">"Platform Error"</span>, err
+      <span class="hljs-property">@_log_error_and_respond</span>(err, context)
     )</pre></div></div>
             
         </li>
@@ -475,8 +475,8 @@ which logs and returns a structured error</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _get_resource_name: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
-    <span class="hljs-keyword">for</span> resource <span class="hljs-keyword">in</span> @resource_list
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_get_resource_name</span>: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+    <span class="hljs-keyword">for</span> resource <span class="hljs-keyword">in</span> <span class="hljs-property">@resource_list</span>
       <span class="hljs-keyword">return</span> resource.name <span class="hljs-keyword">if</span> resource.matches_path(payload.path)
     <span class="hljs-literal">null</span></pre></div></div>
             
@@ -493,7 +493,7 @@ which logs and returns a structured error</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _get_interaction_id: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_get_interaction_id</span>: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
     payload.headers[<span class="hljs-string">'x-interaction-id'</span>]</pre></div></div>
             
         </li>
@@ -509,7 +509,7 @@ which logs and returns a structured error</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _get_action: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_get_action</span>: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
     <span class="hljs-keyword">switch</span> payload.verb
       <span class="hljs-keyword">when</span> <span class="hljs-string">"POST"</span> <span class="hljs-keyword">then</span> <span class="hljs-string">"create"</span>
       <span class="hljs-keyword">when</span> <span class="hljs-string">"PATCH"</span> <span class="hljs-keyword">then</span> <span class="hljs-string">"update"</span>
@@ -535,7 +535,7 @@ which logs and returns a structured error</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _get_body: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_get_body</span>: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
     <span class="hljs-keyword">if</span> payload.body
       <span class="hljs-keyword">try</span>
         body = JSON.parse(payload.body) <span class="hljs-keyword">if</span> <span class="hljs-keyword">typeof</span> payload.body == <span class="hljs-string">'string'</span>
@@ -558,7 +558,7 @@ which logs and returns a structured error</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _get_query: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_get_query</span>: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
     payload.query</pre></div></div>
             
         </li>
@@ -574,7 +574,7 @@ which logs and returns a structured error</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _get_path: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_get_path</span>: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
     payload.path</pre></div></div>
             
         </li>
@@ -597,17 +597,17 @@ while returning as much data as possible</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _get_session_and_caller: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
-    session_and_caller = {session: <span class="hljs-literal">null</span>, caller: <span class="hljs-literal">null</span>}
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_get_session_and_caller</span>: <span class="hljs-function"><span class="hljs-params">(payload)</span> -&gt;</span>
+    session_and_caller = {<span class="hljs-attribute">session</span>: <span class="hljs-literal">null</span>, <span class="hljs-attribute">caller</span>: <span class="hljs-literal">null</span>}
     session_id = payload.headers[<span class="hljs-string">'x-session-id'</span>]
     <span class="hljs-keyword">return</span> bb.<span class="hljs-keyword">try</span>( <span class="hljs-function">=&gt;</span> session_and_caller) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> session_id
 
-    @get_session(session_id)
+    <span class="hljs-property">@get_session</span>(session_id)
     .<span class="hljs-keyword">then</span>( <span class="hljs-function"><span class="hljs-params">(session)</span> =&gt;</span>
       session_and_caller.session = session
       <span class="hljs-keyword">return</span> session_and_caller <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> session || <span class="hljs-keyword">not</span> session.caller_id
 
-      @get_caller(session.caller_id)
+      <span class="hljs-property">@get_caller</span>(session.caller_id)
       .<span class="hljs-keyword">then</span>( <span class="hljs-function"><span class="hljs-params">(caller)</span> -&gt;</span>
         session_and_caller.caller = caller
         session_and_caller
@@ -627,7 +627,7 @@ while returning as much data as possible</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _validate_context: <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_validate_context</span>: <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
     <span class="hljs-keyword">throw</span> Bam.not_found(context.path) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.resource
     <span class="hljs-keyword">throw</span> Bam.no_interaction_id() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.interaction_id
     <span class="hljs-keyword">throw</span> Bam.method_not_allowed() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.action
@@ -677,8 +677,8 @@ For a caller to be permitted:</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _is_permitted: <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span> <span class="hljs-keyword">if</span> @resources[context.resource][context.action].public <span class="hljs-comment"># check 1</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_is_permitted</span>: <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span> <span class="hljs-keyword">if</span> <span class="hljs-property">@resources</span>[context.resource][context.action].public <span class="hljs-comment"># check 1</span>
 
     session = context.session
     caller = context.caller
@@ -729,24 +729,24 @@ add the response and response_time to the context, log the <code>outbound</code>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _call_resource_action: <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_call_resource_action</span>: <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
     start_time = <span class="hljs-keyword">new</span> Date().getTime()
-    @_log_interaction(context, <span class="hljs-string">'inbound'</span>)
+    <span class="hljs-property">@_log_interaction</span>(context, <span class="hljs-string">'inbound'</span>)
 
     resource_context = _.cloneDeep(context)
-    bb.<span class="hljs-keyword">try</span>( <span class="hljs-function">=&gt;</span> @resources[context.resource][context.action](resource_context))
+    bb.<span class="hljs-keyword">try</span>( <span class="hljs-function">=&gt;</span> <span class="hljs-property">@resources</span>[context.resource][context.action](resource_context))
     .<span class="hljs-keyword">then</span>( <span class="hljs-function"><span class="hljs-params">(resource_response)</span> =&gt;</span>
 
       context.response = resource_response
       context.response_time = (<span class="hljs-keyword">new</span> Date().getTime()) - start_time
 
-      @_log_interaction(context, <span class="hljs-string">'outbound'</span>)
+      <span class="hljs-property">@_log_interaction</span>(context, <span class="hljs-string">'outbound'</span>)
 
       resource_response
     )
     .<span class="hljs-keyword">catch</span>( <span class="hljs-function"><span class="hljs-params">(err)</span> =&gt;</span>
-      _log_error(@service_name, <span class="hljs-string">"Service Error"</span>, err)
-      @_log_error_and_respond(err, context)
+      _log_error(<span class="hljs-property">@service_name</span>, <span class="hljs-string">"Service Error"</span>, err)
+      <span class="hljs-property">@_log_error_and_respond</span>(err, context)
     )</pre></div></div>
             
         </li>
@@ -767,12 +767,12 @@ Finally, the context is logged as an <code>outbound</code> <code>error</code> an
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _log_error_and_respond: <span class="hljs-function"><span class="hljs-params">(err, context)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_log_error_and_respond</span>: <span class="hljs-function"><span class="hljs-params">(err, context)</span> -&gt;</span>
     err = Bam.error(err) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err.bam
 
     context.errors = err
     context.id = err.body.reference
-    @_log_interaction(context, <span class="hljs-string">'outbound'</span>, <span class="hljs-string">'error'</span>)
+    <span class="hljs-property">@_log_interaction</span>(context, <span class="hljs-string">'outbound'</span>, <span class="hljs-string">'error'</span>)
     <span class="hljs-keyword">return</span> err</pre></div></div>
             
         </li>
@@ -789,22 +789,22 @@ and sends it to the logging endpoint queue</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _log_interaction: <span class="hljs-function"><span class="hljs-params">(context, code, level)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_log_interaction</span>: <span class="hljs-function"><span class="hljs-params">(context, code, level)</span> -&gt;</span>
     logging_event = {
-      id:                   context.id || Service.generateUUID()
-      interaction_id:       context.interaction_id
-      level:                level || context.level || <span class="hljs-string">'info'</span>
-      component:            context.resource
-      code:                 code || context.code
-      reported_at:          (<span class="hljs-keyword">new</span> Date()).toISOString()
-      data:                 context
-      caller_identity_name: context.caller_identity_name
-      caller_id:            context.caller_id
-      resource:             context.resource
-      action:               context.action
+      <span class="hljs-attribute">id</span>:                   context.id || Service.generateUUID()
+      <span class="hljs-attribute">interaction_id</span>:       context.interaction_id
+      <span class="hljs-attribute">level</span>:                level || context.level || <span class="hljs-string">'info'</span>
+      <span class="hljs-attribute">component</span>:            context.resource
+      <span class="hljs-attribute">code</span>:                 code || context.code
+      <span class="hljs-attribute">reported_at</span>:          (<span class="hljs-keyword">new</span> Date()).toISOString()
+      <span class="hljs-attribute">data</span>:                 context
+      <span class="hljs-attribute">caller_identity_name</span>: context.caller_identity_name
+      <span class="hljs-attribute">caller_id</span>:            context.caller_id
+      <span class="hljs-attribute">resource</span>:             context.resource
+      <span class="hljs-attribute">action</span>:               context.action
     }
 
-    @service.send_message(<span class="hljs-string">''</span>, @options.logging_endpoint, logging_event, {type: <span class="hljs-string">'logging_event'</span>})
+    <span class="hljs-property">@service</span>.send_message(<span class="hljs-string">''</span>, <span class="hljs-property">@options</span>.logging_endpoint, logging_event, {<span class="hljs-attribute">type</span>: <span class="hljs-string">'logging_event'</span>})
 
 <span class="hljs-built_in">module</span>.exports = ResourceService</pre></div></div>
             
