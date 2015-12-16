@@ -90,6 +90,6 @@ Bam.error = (context, err) ->
   if process.env.NODE_ENV in ['development', 'test', 'staging']
     error.stack = err.stack
 
-  build_bam_error(context, 408, [error])
+  build_bam_error(context, 500, [error])
 
 module.exports = Bam
