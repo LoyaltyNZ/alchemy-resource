@@ -89,19 +89,19 @@ class Resource
 
   # `show` method will be called on a `GET`
   show: (context) ->
-    throw Bam.method_not_allowed()
+    throw Bam.method_not_allowed(context)
 
   # `create` method will be called on a `POST`
   create: (context) ->
-    throw Bam.method_not_allowed()
+    throw Bam.method_not_allowed(context)
 
   # `update` method will be called on a `PATCH`
   update: (context) ->
-    throw Bam.method_not_allowed()
+    throw Bam.method_not_allowed(context)
 
   # `delete` method will be called on a `DELETE`
   delete: (context) ->
-    throw Bam.method_not_allowed()
+    throw Bam.method_not_allowed(context)
 
 
 module.exports = Resource

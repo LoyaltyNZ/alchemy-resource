@@ -10,9 +10,26 @@ generateUUID = require("alchemy-ether").generateUUID
 
 Bam = {}
 
+# `build_bam_error` builds an error as specified in [Hoodoo documentation](https://github.com/LoyaltyNZ/hoodoo/tree/master/docs/api_specification#errors.resource).
+# This includes the return type and `bam: true` so that the framework can be certain of this structure.
+build_bam_error = (context, status_code, errors) ->
+  {
+    bam: true
+    status_code: status_code
+    headers: {'Content-Type': 'application/json; charset=utf-8'}
+    body:   {
+      kind:           "Errors",
+      id:             generateUUID()
+      created_at:     (new Date()).toISOString(),
+      interaction_id: context.interaction_id
+      errors: [errors]
+    }
+  }
+
+
 # `joi_validation_error` takes an error from the JSON validation library [Joi](https://www.npmjs.com/package/joi)
 #  and formats it into a Alchemy Resource error
-Bam.joi_validation_error = (joi_error) ->
+Bam.joi_validation_error = (context, joi_error) ->
   errors = []
   for deet in joi_error.details
     switch deet.type
@@ -35,109 +52,44 @@ Bam.joi_validation_error = (joi_error) ->
         errors.push {
           code: "generic.unknown"
           message: deet.message
-          type: deet.type
+          reference: deet.type
         }
 
-  {
-    bam: true
-    status_code: 422
-    body: {
-      errors: errors
-      reference: generateUUID()
-    }
-  }
+  build_bam_error(context, 422, errors)
 
 
-Bam.malformed_body = ->
-  {
-    bam: true
-    status_code: 422
-    body: {
-      code: "platform.malformed"
-      message: "malformed body data"
-      reference: generateUUID()
-    }
-  }
+Bam.malformed_body = (context) ->
+  build_bam_error(context, 422, [{code: "platform.malformed", message: "malformed body data"}])
 
-Bam.method_not_allowed = ->
-  {
-    bam: true
-    status_code: 405
-    body: {
-      code: "platform.method_not_allowed"
-      message: "not allowed"
-      reference: generateUUID()
-    }
-  }
+Bam.method_not_allowed = (context) ->
+  build_bam_error(context, 405, [{code: "platform.method_not_allowed", message: "not allowed"}])
 
-Bam.no_interaction_id = ->
-  {
-    bam: true
-    status_code: 422
-    body: {
-      code: "platform.no_interaction_id"
-      message: "no interaction id"
-      reference: generateUUID()
-    }
-  }
+Bam.no_interaction_id = (context) ->
+  build_bam_error(context, 422, [{code: "platform.no_interaction_id", message: "#{message}"}])
 
-Bam.required_field_missing = (message) ->
-  {
-    bam: true
-    status_code: 422
-    body: {
-      code: "generic.required_field_missing"
-      message: "#{message}"
-      reference: generateUUID()
-    }
-  }
+Bam.required_field_missing = (context, message) ->
+  build_bam_error(context, 422, [{code: "generic.required_field_missing", message: "no interaction id"}])
 
-Bam.not_allowed = ->
-  {
-    bam: true
-    status_code: 403
-    body: {
-      code: "platform.forbidden"
-      message: "not allowed"
-      reference: generateUUID()
-    }
-  }
+Bam.not_allowed = (context) ->
+  build_bam_error(context, 403, [{code: "platform.forbidden", message: "not allowed"}])
 
-Bam.not_found = (resource) ->
-  {
-    bam: true
-    status_code: 404
-    body: {
-      code: "platform.not_found"
-      message: "#{resource} not found"
-      reference: generateUUID()
-    }
-  }
+Bam.not_found = (context, resource) ->
+  build_bam_error(context, 404, [{code: "platform.not_found", message: "#{resource} not found"}])
 
-Bam.exists = (resource) ->
-  {
-    bam: true
-    status_code: 422
-    body: {
-      code: "platform.exists"
-      message: "#{resource} already exists"
-      reference: generateUUID()
-    }
-  }
+Bam.exists = (context, resource) ->
+  build_bam_error(context, 422, [{code: "platform.exists", message: "#{resource} already exists"}])
 
-Bam.error = (err) ->
+Bam.timeout_error = (context, timeout) ->
+  build_bam_error(context, 408, [{code: 'platform.timeout', message: "Request timeout (#{timeout}ms)"}])
+
+Bam.error = (context, err) ->
   error = {
-    bam: true
-    status_code: 500
-    body: {
-      code: 'platform.fault'
-      message: 'An unexpected error occurred'
-
-    }
+    code: 'platform.fault'
+    message: 'An unexpected error occurred'
   }
-
   if process.env.NODE_ENV in ['development', 'test', 'staging']
     error.stack = err.stack
-  error
+
+  build_bam_error(context, 408, [error])
 
 module.exports = Bam

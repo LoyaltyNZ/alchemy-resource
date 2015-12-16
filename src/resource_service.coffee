@@ -205,7 +205,7 @@ class ResourceService
 
       @_validate_context(context)
 
-      throw Bam.not_allowed() if not @_is_permitted(context)
+      throw Bam.not_allowed(context) if not @_is_permitted(context)
 
       @_call_resource_action(context)
     )
@@ -284,10 +284,10 @@ class ResourceService
 
   # `_validate_context` throws errors if the context was not correctly constructed
   _validate_context: (context) ->
-    throw Bam.not_found(context.path) if not context.resource
-    throw Bam.no_interaction_id() if not context.interaction_id
-    throw Bam.method_not_allowed() if not context.action
-    throw Bam.malformed_body() if not context.body
+    throw Bam.not_found(context, context.path) if not context.resource
+    throw Bam.no_interaction_id(context) if not context.interaction_id
+    throw Bam.method_not_allowed(context) if not context.action
+    throw Bam.malformed_body(context) if not context.body
 
   # `_is_permitted` checks that the caller is permitted to call the resource action
   #
@@ -392,7 +392,7 @@ class ResourceService
   # both the caller and the log will have the same reference to identify the problem.
   # Finally, the context is logged as an `outbound` `error` and the Bam error is returned to the caller.
   _log_error_and_respond: (err, context) ->
-    err = Bam.error(err) if not err.bam
+    err = Bam.error(context, err) if not err.bam
 
     context.errors = err
     context.id = err.body.reference

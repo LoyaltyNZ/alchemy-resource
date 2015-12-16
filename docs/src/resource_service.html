@@ -453,7 +453,7 @@ which logs and returns a structured error</p>
 
       <span class="hljs-property">@_validate_context</span>(context)
 
-      <span class="hljs-keyword">throw</span> Bam.not_allowed() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@_is_permitted</span>(context)
+      <span class="hljs-keyword">throw</span> Bam.not_allowed(context) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@_is_permitted</span>(context)
 
       <span class="hljs-property">@_call_resource_action</span>(context)
     )
@@ -628,10 +628,10 @@ while returning as much data as possible</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_validate_context</span>: <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
-    <span class="hljs-keyword">throw</span> Bam.not_found(context.path) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.resource
-    <span class="hljs-keyword">throw</span> Bam.no_interaction_id() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.interaction_id
-    <span class="hljs-keyword">throw</span> Bam.method_not_allowed() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.action
-    <span class="hljs-keyword">throw</span> Bam.malformed_body() <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.body</pre></div></div>
+    <span class="hljs-keyword">throw</span> Bam.not_found(context, context.path) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.resource
+    <span class="hljs-keyword">throw</span> Bam.no_interaction_id(context) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.interaction_id
+    <span class="hljs-keyword">throw</span> Bam.method_not_allowed(context) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.action
+    <span class="hljs-keyword">throw</span> Bam.malformed_body(context) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> context.body</pre></div></div>
             
         </li>
         
@@ -768,7 +768,7 @@ Finally, the context is logged as an <code>outbound</code> <code>error</code> an
             </div>
             
             <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">_log_error_and_respond</span>: <span class="hljs-function"><span class="hljs-params">(err, context)</span> -&gt;</span>
-    err = Bam.error(err) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err.bam
+    err = Bam.error(context, err) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err.bam
 
     context.errors = err
     context.id = err.body.reference
