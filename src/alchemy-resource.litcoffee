@@ -95,5 +95,6 @@ The Alchemy Resource package exports:
 
 ## Changelog
 
-2015-12-3 - Open Sourced  - Graham & Wayne
+2015-12-16 - Updating errors to Hoodoo Specification - Graham
+2015-12-3  - Open Sourced                            - Graham & Wayne
 
