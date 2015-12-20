@@ -5,14 +5,16 @@ Alchemy Resource is an opinionated way to use the
 implementation of the Alchemy Framework to
 create a RESTful, scalable and highly available API.
 
+
+
 The opinions that Alchemy Resource has are:
 
 * Resource APIs have only 4 actions that match directly to HTTP methods:
   `GET` is `show`, `POST` is `create`, `PATCH` is `update` and `DELETE` is `delete`
-* The returned error message structure containing a `code` that is from a set of well defined error types (e.g. `platform.not_found`), a human readable `message`, and a UUID `reference` so API clients and providers have a shared key to discuss specific errors.
+* The returned error message structure contains a `code` that is from a set of well defined error types (e.g. `platform.not_found`), a human readable `message`, and a UUID `reference` so API clients and providers have a shared key to discuss specific errors.
 * Service discovery is accomplished using [RabbitMQ topic exchanges]((https://www.rabbitmq.com/tutorials/tutorial-five-javascript.html)): A resource registers its path as a binding key on the topic exchange `resources.exchange`, e.g. `/v1/users` registers with the binding key `v1.users.#`, then all messages send to `/v1/users` are sent with the routing key `v1.users` which routes messages to the resource.
 * Structured Logging is done via a RabbitMQ queue: Alchemy Resource asynchronously sends messages to a logging queue where a specialised service listens and writes to various outputs (database, console ...)
-* Authentication is accomplished by a caller creating a session and sending it as a header on each request: A `Caller` is resource that has a set of `permissions`, e.g. a caller may be permitted to call `show` on the `Users` resource but not `create`. A `Session` and `Caller` are both resources that are implemented using Alchemy Resource. To `create` a session a caller sends its id and secret to the Session resource and the a session with an id and expiry is returned to be used for authentication. *Currently sessions are stored memcached, this will likely change in the future*.
+* Authentication is accomplished by a caller creating a session and sending the resulting session identifier in a header on each subsequent request: A `Caller` is resource that has a set of `permissions`, e.g. a caller may be permitted to call `show` on the `Users` resource but not `create`. A `Session` and `Caller` are both resources that are implemented using Alchemy Resource. To `create` a session a caller sends its id and secret to the Session resource, a session id and expiry is returned to be used for authentication. *Currently sessions are stored in memcached, this will likely change in the future*.
 
 Other projects that are in different stages of development and open-sourcing that will enable a complete system are:
 
@@ -97,4 +99,3 @@ The Alchemy Resource package exports:
 
 2015-12-16 - Updating errors to Hoodoo Specification - Graham
 2015-12-3  - Open Sourced                            - Graham & Wayne
-
