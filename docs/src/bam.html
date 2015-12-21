@@ -95,15 +95,15 @@ This includes the return type and <code>bam: true</code> so that the framework c
             
             <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">build_bam_error</span> = <span class="hljs-params">(context, status_code, errors)</span> -&gt;</span>
   {
-    <span class="hljs-attribute">bam</span>: <span class="hljs-literal">true</span>
-    <span class="hljs-attribute">status_code</span>: status_code
-    <span class="hljs-attribute">headers</span>: {<span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json; charset=utf-8'</span>}
-    <span class="hljs-attribute">body</span>:   {
-      <span class="hljs-attribute">kind</span>:           <span class="hljs-string">"Errors"</span>,
-      <span class="hljs-attribute">id</span>:             generateUUID()
-      <span class="hljs-attribute">created_at</span>:     (<span class="hljs-keyword">new</span> Date()).toISOString(),
-      <span class="hljs-attribute">interaction_id</span>: context.interaction_id
-      <span class="hljs-attribute">errors</span>: [errors]
+    bam: <span class="hljs-literal">true</span>
+    status_code: status_code
+    headers: {<span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json; charset=utf-8'</span>}
+    body:   {
+      kind:           <span class="hljs-string">"Errors"</span>,
+      id:             generateUUID()
+      created_at:     (<span class="hljs-keyword">new</span> Date()).toISOString(),
+      interaction_id: context.interaction_id
+      errors: [errors]
     }
   }</pre></div></div>
             
@@ -127,57 +127,57 @@ This includes the return type and <code>bam: true</code> so that the framework c
     <span class="hljs-keyword">switch</span> deet.type
       <span class="hljs-keyword">when</span> <span class="hljs-string">'any.required'</span>
         errors.push {
-          <span class="hljs-attribute">code</span>: <span class="hljs-string">"generic.required_field_missing"</span>
-          <span class="hljs-attribute">message</span>: deet.message
+          code: <span class="hljs-string">"generic.required_field_missing"</span>
+          message: deet.message
         }
       <span class="hljs-keyword">when</span> <span class="hljs-string">'object.missing'</span>
         errors.push {
-          <span class="hljs-attribute">code</span>: <span class="hljs-string">"generic.required_field_missing"</span>
-          <span class="hljs-attribute">message</span>: deet.message
+          code: <span class="hljs-string">"generic.required_field_missing"</span>
+          message: deet.message
         }
       <span class="hljs-keyword">when</span> <span class="hljs-string">'string.regex.base'</span>
         errors.push {
-          <span class="hljs-attribute">code</span>: <span class="hljs-string">"generic.invalid_string"</span>
-          <span class="hljs-attribute">message</span>: deet.message
+          code: <span class="hljs-string">"generic.invalid_string"</span>
+          message: deet.message
         }
       <span class="hljs-keyword">else</span>
         errors.push {
-          <span class="hljs-attribute">code</span>: <span class="hljs-string">"generic.unknown"</span>
-          <span class="hljs-attribute">message</span>: deet.message
-          <span class="hljs-attribute">reference</span>: deet.type
+          code: <span class="hljs-string">"generic.unknown"</span>
+          message: deet.message
+          reference: deet.type
         }
 
   build_bam_error(context, <span class="hljs-number">422</span>, errors)
 
 
 Bam.malformed_body = <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
-  build_bam_error(context, <span class="hljs-number">422</span>, [{<span class="hljs-attribute">code</span>: <span class="hljs-string">"platform.malformed"</span>, <span class="hljs-attribute">message</span>: <span class="hljs-string">"malformed body data"</span>}])
+  build_bam_error(context, <span class="hljs-number">422</span>, [{code: <span class="hljs-string">"platform.malformed"</span>, message: <span class="hljs-string">"malformed body data"</span>}])
 
 Bam.method_not_allowed = <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
-  build_bam_error(context, <span class="hljs-number">405</span>, [{<span class="hljs-attribute">code</span>: <span class="hljs-string">"platform.method_not_allowed"</span>, <span class="hljs-attribute">message</span>: <span class="hljs-string">"not allowed"</span>}])
+  build_bam_error(context, <span class="hljs-number">405</span>, [{code: <span class="hljs-string">"platform.method_not_allowed"</span>, message: <span class="hljs-string">"not allowed"</span>}])
 
 Bam.no_interaction_id = <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
-  build_bam_error(context, <span class="hljs-number">422</span>, [{<span class="hljs-attribute">code</span>: <span class="hljs-string">"platform.no_interaction_id"</span>, <span class="hljs-attribute">message</span>: <span class="hljs-string">"<span class="hljs-subst">#{message}</span>"</span>}])
+  build_bam_error(context, <span class="hljs-number">422</span>, [{code: <span class="hljs-string">"platform.no_interaction_id"</span>, message: <span class="hljs-string">"<span class="hljs-subst">#{message}</span>"</span>}])
 
 Bam.required_field_missing = <span class="hljs-function"><span class="hljs-params">(context, message)</span> -&gt;</span>
-  build_bam_error(context, <span class="hljs-number">422</span>, [{<span class="hljs-attribute">code</span>: <span class="hljs-string">"generic.required_field_missing"</span>, <span class="hljs-attribute">message</span>: <span class="hljs-string">"no interaction id"</span>}])
+  build_bam_error(context, <span class="hljs-number">422</span>, [{code: <span class="hljs-string">"generic.required_field_missing"</span>, message: <span class="hljs-string">"no interaction id"</span>}])
 
 Bam.not_allowed = <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
-  build_bam_error(context, <span class="hljs-number">403</span>, [{<span class="hljs-attribute">code</span>: <span class="hljs-string">"platform.forbidden"</span>, <span class="hljs-attribute">message</span>: <span class="hljs-string">"not allowed"</span>}])
+  build_bam_error(context, <span class="hljs-number">403</span>, [{code: <span class="hljs-string">"platform.forbidden"</span>, message: <span class="hljs-string">"not allowed"</span>}])
 
 Bam.not_found = <span class="hljs-function"><span class="hljs-params">(context, resource)</span> -&gt;</span>
-  build_bam_error(context, <span class="hljs-number">404</span>, [{<span class="hljs-attribute">code</span>: <span class="hljs-string">"platform.not_found"</span>, <span class="hljs-attribute">message</span>: <span class="hljs-string">"<span class="hljs-subst">#{resource}</span> not found"</span>}])
+  build_bam_error(context, <span class="hljs-number">404</span>, [{code: <span class="hljs-string">"platform.not_found"</span>, message: <span class="hljs-string">"<span class="hljs-subst">#{resource}</span> not found"</span>}])
 
 Bam.exists = <span class="hljs-function"><span class="hljs-params">(context, resource)</span> -&gt;</span>
-  build_bam_error(context, <span class="hljs-number">422</span>, [{<span class="hljs-attribute">code</span>: <span class="hljs-string">"platform.exists"</span>, <span class="hljs-attribute">message</span>: <span class="hljs-string">"<span class="hljs-subst">#{resource}</span> already exists"</span>}])
+  build_bam_error(context, <span class="hljs-number">422</span>, [{code: <span class="hljs-string">"platform.exists"</span>, message: <span class="hljs-string">"<span class="hljs-subst">#{resource}</span> already exists"</span>}])
 
 Bam.timeout_error = <span class="hljs-function"><span class="hljs-params">(context, timeout)</span> -&gt;</span>
-  build_bam_error(context, <span class="hljs-number">408</span>, [{<span class="hljs-attribute">code</span>: <span class="hljs-string">'platform.timeout'</span>, <span class="hljs-attribute">message</span>: <span class="hljs-string">"Request timeout (<span class="hljs-subst">#{timeout}</span>ms)"</span>}])
+  build_bam_error(context, <span class="hljs-number">408</span>, [{code: <span class="hljs-string">'platform.timeout'</span>, message: <span class="hljs-string">"Request timeout (<span class="hljs-subst">#{timeout}</span>ms)"</span>}])
 
 Bam.error = <span class="hljs-function"><span class="hljs-params">(context, err)</span> -&gt;</span>
   error = {
-    <span class="hljs-attribute">code</span>: <span class="hljs-string">'platform.fault'</span>
-    <span class="hljs-attribute">message</span>: <span class="hljs-string">'An unexpected error occurred'</span>
+    code: <span class="hljs-string">'platform.fault'</span>
+    message: <span class="hljs-string">'An unexpected error occurred'</span>
   }
   <span class="hljs-keyword">if</span> process.env.NODE_ENV <span class="hljs-keyword">in</span> [<span class="hljs-string">'development'</span>, <span class="hljs-string">'test'</span>, <span class="hljs-string">'staging'</span>]
     error.stack = err.stack
