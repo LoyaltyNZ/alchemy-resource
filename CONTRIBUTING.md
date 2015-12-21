@@ -10,7 +10,7 @@
 
 ## Alterations to the README or documentation
 
-* To make alterationst to the `README.md` please alter the `scr/alchemy-resource.litcoffee` file then run `npm run-script doc`.  That will run the below command which will update the `README.md` file and update all the documentation.  
+* To make alterations to the `README.md` please alter the `scr/alchemy-resource.litcoffee` file then run `npm run-script doc`.  That will run the below command which will update the `README.md` file and regenerate the documentation.  
 
 ```
 cat src/alchemy-resource.litcoffee > README.md && docco -l linear src/alchemy-resource.litcoffee && docco src/*.coffee -o docs/src && docco examples/*.coffee -o docs/examples

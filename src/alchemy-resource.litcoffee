@@ -5,8 +5,6 @@ Alchemy Resource is an opinionated way to use the
 implementation of the Alchemy Framework to
 create a RESTful, scalable and highly available API.
 
-
-
 The opinions that Alchemy Resource has are:
 
 * Resource APIs have only 4 actions that match directly to HTTP methods:
