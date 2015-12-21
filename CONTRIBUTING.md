@@ -7,3 +7,12 @@
 * Use the same coding style as the rest of the codebase.
 
 * All pull requests should be made to the `master` branch.
+
+## Alterations to the README or documentation
+
+* To make alterationst to the `README.md` please alter the `scr/alchemy-resource.litcoffee` file then run `npm run-script doc`.  That will run the below command which will update the `README.md` file and update all the documentation.  
+
+```
+cat src/alchemy-resource.litcoffee > README.md && docco -l linear src/alchemy-resource.litcoffee && docco src/*.coffee -o docs/src && docco examples/*.coffee -o docs/examples
+```
+* When any changes are made to any of the source files documentation please also run `npm run-script doc` before commiting those change to ensure all the generated documentation is kept up-to-date.
