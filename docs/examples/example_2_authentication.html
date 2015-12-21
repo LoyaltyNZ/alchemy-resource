@@ -85,7 +85,7 @@ AlchemyResource = <span class="hljs-built_in">require</span> <span class="hljs-s
             </div>
             
             <div class="content"><div class='highlight'><pre>hello_resource.show = <span class="hljs-function"><span class="hljs-params">(context)</span> -&gt;</span>
-  {<span class="hljs-attribute">body</span>: <span class="hljs-string">"Hello <span class="hljs-subst">#{context.body.name}</span>"</span>}</pre></div></div>
+  {body: <span class="hljs-string">"Hello <span class="hljs-subst">#{context.body.name}</span>"</span>}</pre></div></div>
             
         </li>
         
@@ -133,9 +133,9 @@ AlchemyResource = <span class="hljs-built_in">require</span> <span class="hljs-s
             </div>
             
             <div class="content"><div class='highlight'><pre>  service.set_caller(<span class="hljs-string">"cid"</span>, {
-    <span class="hljs-attribute">version</span>: <span class="hljs-number">1</span>
-    <span class="hljs-attribute">permissions</span>: {
-      <span class="hljs-attribute">resources</span>: {
+    version: <span class="hljs-number">1</span>
+    permissions: {
+      resources: {
         <span class="hljs-string">"Hello"</span>: {
           <span class="hljs-string">"show"</span>: <span class="hljs-string">"allow"</span>
         }
@@ -159,7 +159,7 @@ AlchemyResource = <span class="hljs-built_in">require</span> <span class="hljs-s
             </div>
             
             <div class="content"><div class='highlight'><pre>  service.set_session(<span class="hljs-string">"sid"</span>, {
-    <span class="hljs-attribute">caller_id</span>: <span class="hljs-string">"cid"</span>,
+    caller_id: <span class="hljs-string">"cid"</span>,
     caller_version : <span class="hljs-number">1</span>
   })
 )
@@ -179,10 +179,10 @@ AlchemyResource = <span class="hljs-built_in">require</span> <span class="hljs-s
             </div>
             
             <div class="content"><div class='highlight'><pre>  service.send_message_to_resource({
-    <span class="hljs-attribute">path</span>: <span class="hljs-string">'/hello'</span>
-    <span class="hljs-attribute">body</span>: JSON.stringify({ <span class="hljs-attribute">name</span>: <span class="hljs-string">"Alice"</span> })
-    <span class="hljs-attribute">verb</span>: <span class="hljs-string">"GET"</span>
-    <span class="hljs-attribute">headers</span>: {<span class="hljs-string">"x-session-id"</span>: <span class="hljs-string">"sid"</span>}
+    path: <span class="hljs-string">'/hello'</span>
+    body: JSON.stringify({ name: <span class="hljs-string">"Alice"</span> })
+    verb: <span class="hljs-string">"GET"</span>
+    headers: {<span class="hljs-string">"x-session-id"</span>: <span class="hljs-string">"sid"</span>}
   })
 )
 .<span class="hljs-keyword">then</span>( <span class="hljs-function"><span class="hljs-params">(response)</span> -&gt;</span>
