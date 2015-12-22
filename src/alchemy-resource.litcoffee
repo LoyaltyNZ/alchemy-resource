@@ -66,8 +66,8 @@ service.start()
 
 ## Examples
 
-* [Sending a message to a Resource](./examples/example_1_send_message.html)
-* [Authentication of a Resource](./examples/exmaple_2_authentication.html)
+* [Sending a message to a Resource](http://loyaltynz.github.io/alchemy-resource/docs/examples/example_1_send_message.html)
+* [Authentication of a Resource](http://loyaltynz.github.io/alchemy-resource/docs/examples/example_2_authentication.html)
 
 ## Documentation
 
@@ -75,10 +75,10 @@ service.start()
 
 The Alchemy Resource package exports:
 
-1. [Resource](./src/resource.html) the interface that is overridden to implement Resources.
-2. [ResourceService](./src/resource_service.html) contains many resources and manages their discovery, authentication and logging.
-3. [Bam](./src/bam.html) (a homage to [Boom](https://www.npmjs.com/package/boom)) contains the formatted errors to be returned.
-4. [MemcachedSessionClient](./src/memcached_session_client.html) the session client for memcached.
+1. [Resource](http://loyaltynz.github.io/alchemy-resource/docs/src/resource.html) the interface that is overridden to implement Resources.
+2. [ResourceService](http://loyaltynz.github.io/alchemy-resource/docs/src/resource_service.html) contains many resources and manages their discovery, authentication and logging.
+3. [Bam](http://loyaltynz.github.io/alchemy-resource/docs/src/bam.html) (a homage to [Boom](https://www.npmjs.com/package/boom)) contains the formatted errors to be returned.
+4. [MemcachedSessionClient](http://loyaltynz.github.io/alchemy-resource/docs/src/memcached_session_client.html) the session client for memcached.
 
     module.exports = {
       Resource:                require('./resource')
