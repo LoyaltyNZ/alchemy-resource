@@ -418,4 +418,12 @@ class ResourceService
 
     @service.send_message('', @options.logging_endpoint, logging_event, {type: 'logging_event'})
 
+
+# ## Errors
+# Include the errors on alchemy-ether Service onto the ResourceService
+# Further information available [here](http://loyaltynz.github.io/alchemy-ether/docs/src/service.html)
+ResourceService.NAckError = Service.NAckError
+ResourceService.MessageNotDeliveredError = Service.MessageNotDeliveredError
+ResourceService.TimeoutError = Service.TimeoutError
+
 module.exports = ResourceService

@@ -804,7 +804,26 @@ and sends it to the logging endpoint queue</p>
       action:               context.action
     }
 
-    @service.send_message(<span class="hljs-string">''</span>, @options.logging_endpoint, logging_event, {type: <span class="hljs-string">'logging_event'</span>})
+    @service.send_message(<span class="hljs-string">''</span>, @options.logging_endpoint, logging_event, {type: <span class="hljs-string">'logging_event'</span>})</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <h2 id="errors">Errors</h2>
+<p>Include the errors on alchemy-ether Service onto the ResourceService
+Further information available <a href="http://loyaltynz.github.io/alchemy-ether/docs/src/service.html">here</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>ResourceService.NAckError = Service.NAckError
+ResourceService.MessageNotDeliveredError = Service.MessageNotDeliveredError
+ResourceService.TimeoutError = Service.TimeoutError
 
 <span class="hljs-built_in">module</span>.exports = ResourceService</pre></div></div>
             

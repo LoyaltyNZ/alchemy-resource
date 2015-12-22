@@ -148,7 +148,7 @@ describe "ResourceService", ->
         .then( ->
           throw "SHOULD NOT GET HERE"
         )
-        .catch(Service.MessageNotDeliveredError, (err) ->
+        .catch(ResourceService.MessageNotDeliveredError, (err) ->
 
         )
 
@@ -156,21 +156,21 @@ describe "ResourceService", ->
         .then( ->
           throw "SHOULD NOT GET HERE"
         )
-        .catch(Service.MessageNotDeliveredError, (err) ->
+        .catch(ResourceService.MessageNotDeliveredError, (err) ->
         )
 
         badreq3 = service.send_message_to_resource({verb: "GET", path: "/prefix#{resource1_path}"})
         .then( ->
           throw "SHOULD NOT GET HERE"
         )
-        .catch(Service.MessageNotDeliveredError, (err) ->
+        .catch(ResourceService.MessageNotDeliveredError, (err) ->
         )
 
         badreq4 = service.send_message_to_resource({verb: "GET", path: "/v1/"})
         .then( ->
           throw "SHOULD NOT GET HERE"
         )
-        .catch(Service.MessageNotDeliveredError, (err) ->
+        .catch(ResourceService.MessageNotDeliveredError, (err) ->
         )
 
         bb.all([badreq1, badreq2, badreq3, badreq4])
