@@ -1,5 +1,7 @@
 # Alchemy Resource
 
+[![npm version](https://badge.fury.io/js/alchemy-resource.svg)](https://badge.fury.io/js/alchemy-resource) [![Build Status](https://travis-ci.org/LoyaltyNZ/alchemy-resource.svg?branch=master)](https://travis-ci.org/LoyaltyNZ/alchemy-resource) [![Code Climate](https://codeclimate.com/github/LoyaltyNZ/alchemy-resource/badges/gpa.svg)](https://codeclimate.com/github/LoyaltyNZ/alchemy-resource)
+
 Alchemy Resource is an opinionated way to use the
 [alchemy-ether](https://github.com/LoyaltyNZ/alchemy-ether)
 implementation of the Alchemy Framework to
