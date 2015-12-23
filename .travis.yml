@@ -18,5 +18,10 @@ compiler:
 before_install:
   - export CXX="g++-4.8"
 
+# after_success:
+#   - codeclimate-test-reporter < coverage/lcov.info
+
 node_js:
   - "0.12.7"
+
+# TODO: codeclimate-repo-token

@@ -1,4 +1,5 @@
 --compilers coffee:coffee-script/register
+--require coffee-coverage/register-istanbul
 --require test/spec_helper
 --recursive
 --timeout 10000

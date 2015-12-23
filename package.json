@@ -24,10 +24,12 @@
   },
   "devDependencies": {
     "mocha": "2.3.4",
-    "chai": "3.4.1"
+    "chai": "3.4.1",
+    "coffee-coverage": "0.7.0",
+    "istanbul": "0.4.1"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "mocha && istanbul report lcov html --config .istanbul.yml",
     "doc": "cat src/alchemy-resource.litcoffee > README.md && docco -l linear src/alchemy-resource.litcoffee && docco src/*.coffee -o docs/src && docco examples/*.coffee -o docs/examples"
   },
   "license": "LGPL-3.0"
