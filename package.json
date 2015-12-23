@@ -30,5 +30,5 @@
     "test": "mocha",
     "doc": "cat src/alchemy-resource.litcoffee > README.md && docco -l linear src/alchemy-resource.litcoffee && docco src/*.coffee -o docs/src && docco examples/*.coffee -o docs/examples"
   },
-  "license": "LGPL 3.0"
+  "license": "LGPL-3.0"
 }
