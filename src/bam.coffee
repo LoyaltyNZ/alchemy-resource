@@ -22,7 +22,7 @@ build_bam_error = (context, status_code, errors) ->
       id:             generateUUID()
       created_at:     (new Date()).toISOString(),
       interaction_id: context.interaction_id
-      errors: [errors]
+      errors: errors
     }
   }
 
