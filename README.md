@@ -1,6 +1,9 @@
 # Alchemy Resource
 
-[![npm version](https://badge.fury.io/js/alchemy-resource.svg)](https://badge.fury.io/js/alchemy-resource) [![Build Status](https://travis-ci.org/LoyaltyNZ/alchemy-resource.svg?branch=master)](https://travis-ci.org/LoyaltyNZ/alchemy-resource) [![Code Climate](https://codeclimate.com/github/LoyaltyNZ/alchemy-resource/badges/gpa.svg)](https://codeclimate.com/github/LoyaltyNZ/alchemy-resource)
+[![npm version](https://badge.fury.io/js/alchemy-resource.svg)](https://badge.fury.io/js/alchemy-resource)
+[![Build Status](https://travis-ci.org/LoyaltyNZ/alchemy-resource.svg?branch=master)](https://travis-ci.org/LoyaltyNZ/alchemy-resource)
+[![Code Climate](https://codeclimate.com/github/LoyaltyNZ/alchemy-resource/badges/gpa.svg)](https://codeclimate.com/github/LoyaltyNZ/alchemy-resource)
+[![License](https://img.shields.io/badge/license-LGPL--3.0-blue.svg)](http://www.gnu.org/licenses/lgpl-3.0.en.html)
 
 Alchemy Resource is an opinionated way to use the
 [alchemy-ether](https://github.com/LoyaltyNZ/alchemy-ether)
