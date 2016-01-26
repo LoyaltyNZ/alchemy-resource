@@ -37,7 +37,7 @@ class ResourceService
   # * `memcached_uri` the uri of the memchaced host
   # * `memcached_session_namespace` the prefix for the session key in memcached
   # * `memcached_caller_namespace` the prefix for the caller key in memcached
-  # * `ampq_uri` the uri for the RabbitMQ host
+  # * `amqp_uri` the uri for the RabbitMQ host
   # * `service_timeout` the timeout set for the resource service
   # * `service_queue` and `response_queue` options are passed to the internal alchemy-ether service
   #
@@ -55,7 +55,7 @@ class ResourceService
         memcached_uri: 'localhost:11211'
         memcached_session_namespace: ''
         memcached_caller_namespace: ''
-        ampq_uri: 'amqp://localhost'
+        amqp_uri: 'amqp://localhost'
         service_timeout: 1000
         service_queue: true
         response_queue: true
@@ -71,7 +71,7 @@ class ResourceService
     @service = new Service(@service_name, {
       service_queue: @options.service_queue
       response_queue: @options.response_queue
-      ampq_uri: @options.ampq_uri
+      amqp_uri: @options.amqp_uri
       timeout: @options.service_timeout
       service_fn: @_resource_service_fn
     })

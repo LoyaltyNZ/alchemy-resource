@@ -164,7 +164,7 @@ a list of resources, and an object of options including:</p>
 <li><code>memcached_uri</code> the uri of the memchaced host</li>
 <li><code>memcached_session_namespace</code> the prefix for the session key in memcached</li>
 <li><code>memcached_caller_namespace</code> the prefix for the caller key in memcached</li>
-<li><code>ampq_uri</code> the uri for the RabbitMQ host</li>
+<li><code>amqp_uri</code> the uri for the RabbitMQ host</li>
 <li><code>service_timeout</code> the timeout set for the resource service</li>
 <li><code>service_queue</code> and <code>response_queue</code> options are passed to the internal alchemy-ether service</li>
 </ul>
@@ -187,7 +187,7 @@ a list of resources, and an object of options including:</p>
         memcached_uri: <span class="hljs-string">'localhost:11211'</span>
         memcached_session_namespace: <span class="hljs-string">''</span>
         memcached_caller_namespace: <span class="hljs-string">''</span>
-        ampq_uri: <span class="hljs-string">'amqp://localhost'</span>
+        amqp_uri: <span class="hljs-string">'amqp://localhost'</span>
         service_timeout: <span class="hljs-number">1000</span>
         service_queue: <span class="hljs-literal">true</span>
         response_queue: <span class="hljs-literal">true</span>
@@ -203,7 +203,7 @@ a list of resources, and an object of options including:</p>
     @service = <span class="hljs-keyword">new</span> Service(@service_name, {
       service_queue: @options.service_queue
       response_queue: @options.response_queue
-      ampq_uri: @options.ampq_uri
+      amqp_uri: @options.amqp_uri
       timeout: @options.service_timeout
       service_fn: @_resource_service_fn
     })</pre></div></div>
