@@ -25,16 +25,17 @@ describe "ResourceService", ->
       service = new ResourceService('testService')
       bb.all([service.start(), resource_service.start()])
       .then( ->
-        service.send_message_to_service(service_name, {verb: "GET", path: resource_path})
+        service.send_request_to_service(service_name, {verb: "GET", path: resource_path})
       )
       .then( (body) ->
         expect(body.body.hello).to.equal "world"
         expect(body.status_code).to.equal 200
       )
       .then( ->
-        service.send_message_to_resource({verb: "GET", path: resource_path})
+        service.send_request_to_resource({verb: "GET", path: resource_path})
       )
       .then( (body) ->
+        console.log "ASD", body
         expect(body.body.hello).to.equal "world"
         expect(body.status_code).to.equal 200
       )
@@ -63,11 +64,11 @@ describe "ResourceService", ->
       service = new ResourceService('testService')
       bb.all([service.start(), resource_service.start()])
       .then( ->
-        req1 = service.send_message_to_resource({verb: "GET", path: resource1_path})
-        req2 = service.send_message_to_resource({verb: "GET", path: resource2_path})
-        req3 = service.send_message_to_resource({verb: "GET", path: "#{resource1_path}/"})
-        req4 = service.send_message_to_resource({verb: "GET", path: "#{resource1_path}/identifier"})
-        req5 = service.send_message_to_resource({verb: "GET", path: "#{resource1_path}/identifier/ksecond"})
+        req1 = service.send_request_to_resource({verb: "GET", path: resource1_path})
+        req2 = service.send_request_to_resource({verb: "GET", path: resource2_path})
+        req3 = service.send_request_to_resource({verb: "GET", path: "#{resource1_path}/"})
+        req4 = service.send_request_to_resource({verb: "GET", path: "#{resource1_path}/identifier"})
+        req5 = service.send_request_to_resource({verb: "GET", path: "#{resource1_path}/identifier/ksecond"})
 
         bb.all([req1, req2, req3, req4, req5])
       )
@@ -112,8 +113,8 @@ describe "ResourceService", ->
       service = new ResourceService('testService')
       bb.all([service.start(), resource_service.start()])
       .then( ->
-        req1 = service.send_message_to_resource({verb: "GET", path: resource1_path})
-        req2 = service.send_message_to_resource({verb: "GET", path: resource2_path})
+        req1 = service.send_request_to_resource({verb: "GET", path: resource1_path})
+        req2 = service.send_request_to_resource({verb: "GET", path: resource2_path})
 
         bb.all([req1, req2])
       )
@@ -144,7 +145,7 @@ describe "ResourceService", ->
       service = new ResourceService('testService')
       bb.all([service.start(), resource_service.start()])
       .then( ->
-        badreq1 = service.send_message_to_resource({verb: "GET", path: "#{resource1_name}"})
+        badreq1 = service.send_request_to_resource({verb: "GET", path: "#{resource1_name}"})
         .then( ->
           throw "SHOULD NOT GET HERE"
         )
@@ -152,21 +153,21 @@ describe "ResourceService", ->
 
         )
 
-        badreq2 = service.send_message_to_resource({verb: "GET", path: "/v2/#{resource1_name}"})
+        badreq2 = service.send_request_to_resource({verb: "GET", path: "/v2/#{resource1_name}"})
         .then( ->
           throw "SHOULD NOT GET HERE"
         )
         .catch(ResourceService.MessageNotDeliveredError, (err) ->
         )
 
-        badreq3 = service.send_message_to_resource({verb: "GET", path: "/prefix#{resource1_path}"})
+        badreq3 = service.send_request_to_resource({verb: "GET", path: "/prefix#{resource1_path}"})
         .then( ->
           throw "SHOULD NOT GET HERE"
         )
         .catch(ResourceService.MessageNotDeliveredError, (err) ->
         )
 
-        badreq4 = service.send_message_to_resource({verb: "GET", path: "/v1/"})
+        badreq4 = service.send_request_to_resource({verb: "GET", path: "/v1/"})
         .then( ->
           throw "SHOULD NOT GET HERE"
         )
@@ -205,7 +206,7 @@ describe "ResourceService", ->
         bb.all([set_session, set_caller])
       )
       .then( ->
-        unatuh_req = service.send_message_to_resource({
+        unatuh_req = service.send_request_to_resource({
           verb: "GET",
           path: resource1_path
           headers: {"x-session-id": 'badsession'}
@@ -214,7 +215,7 @@ describe "ResourceService", ->
           expect(body.status_code).to.equal 403
         )
 
-        atuh_req = service.send_message_to_resource({
+        atuh_req = service.send_request_to_resource({
           verb: "GET",
           path: resource1_path
           headers: {"x-session-id": 'goodsession'}
@@ -253,7 +254,7 @@ describe "ResourceService", ->
 
         bb.all([logging_service.start(), service.start(), resource_service.start()])
         .then( ->
-          service.send_message_to_resource({verb: "GET", path: "/v1/test_resource"})
+          service.send_request_to_resource({verb: "GET", path: "/v1/test_resource"})
           .delay(20)
         )
         .then( (body) ->
@@ -289,7 +290,7 @@ describe "ResourceService", ->
 
         bb.all([logging_service.start(), service.start(), resource_service.start()])
         .then( ->
-          service.send_message_to_resource({verb: "GET", path: "/v1/test_resource"})
+          service.send_request_to_resource({verb: "GET", path: "/v1/test_resource"})
           .delay(10)
         )
         .then( (body) ->
@@ -311,7 +312,7 @@ describe "ResourceService", ->
 
         bb.all([service.start(), resource_service.start()])
         .then( ->
-          service.send_message_to_resource({verb: "GET", path: "/v1/test_resource"})
+          service.send_request_to_resource({verb: "GET", path: "/v1/test_resource"})
         )
         .then( (body) ->
           expect(body.status_code).to.equal 403
@@ -330,7 +331,7 @@ describe "ResourceService", ->
 
         bb.all([service.start(), resource_service.start()])
         .then( ->
-          service.send_message_to_resource({verb: "GET", path: "/v1/test_resource"})
+          service.send_request_to_resource({verb: "GET", path: "/v1/test_resource"})
         )
         .then( (body) ->
           expect(body.status_code).to.equal 405

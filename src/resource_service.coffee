@@ -63,8 +63,10 @@ class ResourceService
     )
 
     @resources = {}
+    resource_paths = []
     for r in @resource_list
       @resources[r.name] = r
+      resource_paths.push r.path
 
     @session_client = new MemcachedSessionClient(@options) if @options.session_client
 
@@ -73,8 +75,8 @@ class ResourceService
       response_queue: @options.response_queue
       amqp_uri: @options.amqp_uri
       timeout: @options.service_timeout
-      service_fn: @_resource_service_fn
-    })
+      resource_paths: resource_paths
+    }, @_resource_service_fn)
 
   # #### Session Client Methods
   # To make it easier to use the Resource Service some methods are wrapped
@@ -108,9 +110,6 @@ class ResourceService
       @service.start()
     )
     .then( =>
-      @_bind_resources_to_exchange(@resource_list)
-    )
-    .then( =>
       _log @service_name, "Started with #{JSON.stringify(@options)}"
     )
 
@@ -131,40 +130,36 @@ class ResourceService
       _log @service_name, "Stopped"
     )
 
-  # `_bind_resources_to_exchange` takes a list of resources and binds them to the `resources.exchange` exchange.
-  #
-  # First it gets the service connection mangers service channel and uses this to assert the queue exists,
-  # then it loops over all of the resources and binds its `binding_key` to the queue of `@service_name`.
-  # *For more information on `binding_key` read the [Resource Documentation](./resource.html)*
-  _bind_resources_to_exchange: (resources) ->
-    @service.connection_manager.get_service_channel()
-    .then( (service_channel) =>
-      service_channel.assertExchange("resources.exchange", 'topic')
-      .then( =>
-        promises = []
-        for resource in resources
-          promises.push service_channel.bindQueue(@service_name, "resources.exchange", resource.binding_key)
-        bb.all(promises)
-      )
-    )
+
 
   # #### Send Message
 
-  # `send_message_to_resource` sends a message to a resource without needing to know which service it is located in.
-  # It takes a HTTP payload
-  # and sends converts the `payload.path` into a routing key
-  # then publishing it on the `resources.exchange` topic exchange.
-  # This can be used by the
-  send_message_to_resource: (payload) ->
-    @service.send_HTTP_request_message(
-      "resources.exchange",
-      Resource.path_to_routing_key(payload.path),
-      payload
-    )
+
+  add_interaction_id: (payload) ->
+    payload.headers = {} if !payload.headers
+
+    if !payload.headers['x-interaction-id']
+      payload.headers['x-interaction-id'] = Service.generateUUID()
 
   # `send_message_to_service` wraps the method from alchemy-ether service for convenience
   send_message_to_service: (service, payload) ->
+    @add_interaction_id(payload)
     @service.send_message_to_service( service, payload)
+
+  # `send_request_to_service` wraps the method from alchemy-ether service for convenience
+  send_message_to_resource: (payload) ->
+    @add_interaction_id(payload)
+    @service.send_message_to_resource( payload)
+
+  # `send_request_to_service` wraps the method from alchemy-ether service for convenience
+  send_request_to_service: (service, payload) ->
+    @add_interaction_id(payload)
+    @service.send_request_to_service( service, payload)
+
+  # `send_request_to_service` wraps the method from alchemy-ether service for convenience
+  send_request_to_resource: (payload) ->
+    @add_interaction_id(payload)
+    @service.send_request_to_resource(payload)
 
 
   # #### Process Message

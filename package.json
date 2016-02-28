@@ -16,7 +16,7 @@
     "node": ">= 0.12.7"
   },
   "dependencies": {
-    "alchemy-ether": "0.0.4",
+    "alchemy-ether": "git@github.com:LoyaltyNZ/alchemy-ether.git#feature/v1.0",
     "coffee-script": "1.10.0",
     "memcached": "2.2.0",
     "bluebird": "3.0.5",
