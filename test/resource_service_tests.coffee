@@ -35,7 +35,6 @@ describe "ResourceService", ->
         service.send_request_to_resource({verb: "GET", path: resource_path})
       )
       .then( (body) ->
-        console.log "ASD", body
         expect(body.body.hello).to.equal "world"
         expect(body.status_code).to.equal 200
       )
@@ -238,8 +237,7 @@ describe "ResourceService", ->
       it 'should log 2 (inbound and outbound) messages', ->
         service = new ResourceService('testService')
         logging_messages = 0
-        logging_service = new Service('test.logging',
-          service_fn: (req) ->
+        logging_service = new Service('test.logging', {}, (req) ->
             logging_messages += 1
         )
 
@@ -267,11 +265,9 @@ describe "ResourceService", ->
       it 'should be able to add additional logging data to the logged events', ->
         service = new ResourceService('testService')
         log_message = null
-        logging_service = new Service('test.logging',
-          service_fn: (req) ->
-            log_message = req.data.response.log
+        logging_service = new Service('test.logging', {}, (req) ->
+          log_message = req.body.data.response.log
         )
-
 
         resource = new Resource(
           "resource"
@@ -283,6 +279,7 @@ describe "ResourceService", ->
             body: { "hello": "world" }
             log:  { message: "log message" }
           }
+
         resource.show.public = true
         resource_service = new ResourceService('testResource', [resource], logging_endpoint: 'test.logging')
 
@@ -291,9 +288,10 @@ describe "ResourceService", ->
         bb.all([logging_service.start(), service.start(), resource_service.start()])
         .then( ->
           service.send_request_to_resource({verb: "GET", path: "/v1/test_resource"})
-          .delay(10)
+          .delay(100)
         )
         .then( (body) ->
+
           expect(log_message.message).to.equal "log message"
         )
         .finally(->
