@@ -25,14 +25,14 @@ describe "ResourceService", ->
       service = new ResourceService('testService')
       bb.all([service.start(), resource_service.start()])
       .then( ->
-        service.send_message_to_service(service_name, {verb: "GET", path: resource_path})
+        service.send_request_to_service(service_name, {verb: "GET", path: resource_path})
       )
       .then( (body) ->
         expect(body.body.hello).to.equal "world"
         expect(body.status_code).to.equal 200
       )
       .then( ->
-        service.send_message_to_resource({verb: "GET", path: resource_path})
+        service.send_request_to_resource({verb: "GET", path: resource_path})
       )
       .then( (body) ->
         expect(body.body.hello).to.equal "world"
@@ -63,11 +63,11 @@ describe "ResourceService", ->
       service = new ResourceService('testService')
       bb.all([service.start(), resource_service.start()])
       .then( ->
-        req1 = service.send_message_to_resource({verb: "GET", path: resource1_path})
-        req2 = service.send_message_to_resource({verb: "GET", path: resource2_path})
-        req3 = service.send_message_to_resource({verb: "GET", path: "#{resource1_path}/"})
-        req4 = service.send_message_to_resource({verb: "GET", path: "#{resource1_path}/identifier"})
-        req5 = service.send_message_to_resource({verb: "GET", path: "#{resource1_path}/identifier/ksecond"})
+        req1 = service.send_request_to_resource({verb: "GET", path: resource1_path})
+        req2 = service.send_request_to_resource({verb: "GET", path: resource2_path})
+        req3 = service.send_request_to_resource({verb: "GET", path: "#{resource1_path}/"})
+        req4 = service.send_request_to_resource({verb: "GET", path: "#{resource1_path}/identifier"})
+        req5 = service.send_request_to_resource({verb: "GET", path: "#{resource1_path}/identifier/ksecond"})
 
         bb.all([req1, req2, req3, req4, req5])
       )
@@ -112,8 +112,8 @@ describe "ResourceService", ->
       service = new ResourceService('testService')
       bb.all([service.start(), resource_service.start()])
       .then( ->
-        req1 = service.send_message_to_resource({verb: "GET", path: resource1_path})
-        req2 = service.send_message_to_resource({verb: "GET", path: resource2_path})
+        req1 = service.send_request_to_resource({verb: "GET", path: resource1_path})
+        req2 = service.send_request_to_resource({verb: "GET", path: resource2_path})
 
         bb.all([req1, req2])
       )
@@ -144,7 +144,7 @@ describe "ResourceService", ->
       service = new ResourceService('testService')
       bb.all([service.start(), resource_service.start()])
       .then( ->
-        badreq1 = service.send_message_to_resource({verb: "GET", path: "#{resource1_name}"})
+        badreq1 = service.send_request_to_resource({verb: "GET", path: "#{resource1_name}"})
         .then( ->
           throw "SHOULD NOT GET HERE"
         )
@@ -152,21 +152,21 @@ describe "ResourceService", ->
 
         )
 
-        badreq2 = service.send_message_to_resource({verb: "GET", path: "/v2/#{resource1_name}"})
+        badreq2 = service.send_request_to_resource({verb: "GET", path: "/v2/#{resource1_name}"})
         .then( ->
           throw "SHOULD NOT GET HERE"
         )
         .catch(ResourceService.MessageNotDeliveredError, (err) ->
         )
 
-        badreq3 = service.send_message_to_resource({verb: "GET", path: "/prefix#{resource1_path}"})
+        badreq3 = service.send_request_to_resource({verb: "GET", path: "/prefix#{resource1_path}"})
         .then( ->
           throw "SHOULD NOT GET HERE"
         )
         .catch(ResourceService.MessageNotDeliveredError, (err) ->
         )
 
-        badreq4 = service.send_message_to_resource({verb: "GET", path: "/v1/"})
+        badreq4 = service.send_request_to_resource({verb: "GET", path: "/v1/"})
         .then( ->
           throw "SHOULD NOT GET HERE"
         )
@@ -205,7 +205,7 @@ describe "ResourceService", ->
         bb.all([set_session, set_caller])
       )
       .then( ->
-        unatuh_req = service.send_message_to_resource({
+        unatuh_req = service.send_request_to_resource({
           verb: "GET",
           path: resource1_path
           headers: {"x-session-id": 'badsession'}
@@ -214,7 +214,7 @@ describe "ResourceService", ->
           expect(body.status_code).to.equal 403
         )
 
-        atuh_req = service.send_message_to_resource({
+        atuh_req = service.send_request_to_resource({
           verb: "GET",
           path: resource1_path
           headers: {"x-session-id": 'goodsession'}
@@ -237,8 +237,7 @@ describe "ResourceService", ->
       it 'should log 2 (inbound and outbound) messages', ->
         service = new ResourceService('testService')
         logging_messages = 0
-        logging_service = new Service('test.logging',
-          service_fn: (req) ->
+        logging_service = new Service('test.logging', {}, (req) ->
             logging_messages += 1
         )
 
@@ -253,7 +252,7 @@ describe "ResourceService", ->
 
         bb.all([logging_service.start(), service.start(), resource_service.start()])
         .then( ->
-          service.send_message_to_resource({verb: "GET", path: "/v1/test_resource"})
+          service.send_request_to_resource({verb: "GET", path: "/v1/test_resource"})
           .delay(20)
         )
         .then( (body) ->
@@ -266,11 +265,9 @@ describe "ResourceService", ->
       it 'should be able to add additional logging data to the logged events', ->
         service = new ResourceService('testService')
         log_message = null
-        logging_service = new Service('test.logging',
-          service_fn: (req) ->
-            log_message = req.data.response.log
+        logging_service = new Service('test.logging', {}, (req) ->
+          log_message = req.body.data.response.log
         )
-
 
         resource = new Resource(
           "resource"
@@ -282,6 +279,7 @@ describe "ResourceService", ->
             body: { "hello": "world" }
             log:  { message: "log message" }
           }
+
         resource.show.public = true
         resource_service = new ResourceService('testResource', [resource], logging_endpoint: 'test.logging')
 
@@ -289,10 +287,11 @@ describe "ResourceService", ->
 
         bb.all([logging_service.start(), service.start(), resource_service.start()])
         .then( ->
-          service.send_message_to_resource({verb: "GET", path: "/v1/test_resource"})
-          .delay(10)
+          service.send_request_to_resource({verb: "GET", path: "/v1/test_resource"})
+          .delay(100)
         )
         .then( (body) ->
+
           expect(log_message.message).to.equal "log message"
         )
         .finally(->
@@ -311,7 +310,7 @@ describe "ResourceService", ->
 
         bb.all([service.start(), resource_service.start()])
         .then( ->
-          service.send_message_to_resource({verb: "GET", path: "/v1/test_resource"})
+          service.send_request_to_resource({verb: "GET", path: "/v1/test_resource"})
         )
         .then( (body) ->
           expect(body.status_code).to.equal 403
@@ -330,7 +329,7 @@ describe "ResourceService", ->
 
         bb.all([service.start(), resource_service.start()])
         .then( ->
-          service.send_message_to_resource({verb: "GET", path: "/v1/test_resource"})
+          service.send_request_to_resource({verb: "GET", path: "/v1/test_resource"})
         )
         .then( (body) ->
           expect(body.status_code).to.equal 405

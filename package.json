@@ -1,7 +1,7 @@
 {
   "name": "alchemy-resource",
   "description": "alchemy-resource is a layer on alchemy-ether that adds resource",
-  "version": "0.0.7",
+  "version": "1.0.0",
   "homepage": "https://github.com/LoyaltyNZ/alchemy-resource",
   "repository": {
     "type": "git",
@@ -16,7 +16,7 @@
     "node": ">= 0.12.7"
   },
   "dependencies": {
-    "alchemy-ether": "0.0.4",
+    "alchemy-ether": "1.0.0",
     "coffee-script": "1.10.0",
     "memcached": "2.2.0",
     "bluebird": "3.0.5",

@@ -51,7 +51,7 @@ service.start()
 .then( ->
   # Service sending message to the resource,
   # it only knows the path and does not know where the service lives.
-  service.send_message_to_resource({
+  service.send_request_to_resource({
     path: '/hello'
     body: JSON.stringify({ name: "Alice" })
     verb: "GET"
@@ -68,7 +68,7 @@ service.start()
 
 ## Examples
 
-* [Sending a message to a Resource](http://loyaltynz.github.io/alchemy-resource/docs/examples/example_1_send_message.html)
+* [Sending a message to a Resource](http://loyaltynz.github.io/alchemy-resource/docs/examples/example_1_send_request.html)
 * [Authentication of a Resource](http://loyaltynz.github.io/alchemy-resource/docs/examples/example_2_authentication.html)
 
 ## Documentation

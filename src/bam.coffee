@@ -65,7 +65,7 @@ Bam.method_not_allowed = (context) ->
   build_bam_error(context, 405, [{code: "platform.method_not_allowed", message: "not allowed"}])
 
 Bam.no_interaction_id = (context) ->
-  build_bam_error(context, 422, [{code: "platform.no_interaction_id", message: "#{message}"}])
+  build_bam_error(context, 422, [{code: "platform.no_interaction_id", message: ""}])
 
 Bam.required_field_missing = (context, message) ->
   build_bam_error(context, 422, [{code: "generic.required_field_missing", message: "no interaction id"}])
