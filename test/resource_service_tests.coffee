@@ -265,8 +265,8 @@ describe "ResourceService", ->
       it 'should be able to add additional logging data to the logged events', ->
         service = new ResourceService('testService')
         log_message = null
-        logging_service = new Service('test.logging', {}, (req) ->
-          log_message = req.body.data.response.log
+        logging_service = new Service('test.logging', {}, (payload) ->
+          log_message = JSON.parse(payload.body).data.response.log
         )
 
         resource = new Resource(

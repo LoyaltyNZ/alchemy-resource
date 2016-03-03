@@ -397,7 +397,7 @@ class ResourceService
   # `_log_interaction` constructs a log event message and from a context, code and level
   # and sends it to the logging endpoint queue
   _log_interaction: (context, code, level) ->
-    logging_event = body: {
+    logging_event = {
       id:                   context.id || Service.generateUUID()
       interaction_id:       context.interaction_id
       level:                level || context.level || 'info'
@@ -411,8 +411,7 @@ class ResourceService
       action:               context.action
     }
 
-    console.log "ASFSASA", @options.logging_endpoint, logging_event
-    @send_message_to_service(@options.logging_endpoint, logging_event)
+    @send_message_to_service(@options.logging_endpoint, {body: JSON.stringify(logging_event)})
 
 
 # ## Errors
