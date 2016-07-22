@@ -42,7 +42,7 @@ service.start()
 )
 .then( ->
   # For authentication the session id needs to be sent as header
-  service.send_message_to_resource({
+  service.send_request_to_resource({
     path: '/hello'
     body: JSON.stringify({ name: "Alice" })
     verb: "GET"

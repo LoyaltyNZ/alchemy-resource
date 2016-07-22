@@ -23,7 +23,7 @@ service.start()
 .then( ->
   # Service sending message to the resource,
   # it only knows the path and does not know where the service lives.
-  service.send_message_to_resource({
+  service.send_request_to_resource({
     path: '/hello'
     body: JSON.stringify({ name: "Alice" })
     verb: "GET"
