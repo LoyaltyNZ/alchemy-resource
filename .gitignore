@@ -1,2 +1,9 @@
 node_modules
 .DS_Store
+
+# Ignore temporary files created by editors etc
+.vscode/
+.DS_STORE
+*.log
+.idea/*
+.run/*
