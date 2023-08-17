@@ -2,7 +2,7 @@
 
 ## v1.0.2
 
-- Critical vulnerabilities update [DS-2949](https://loyaltynz.atlassian.net/browse/DS-2949)
+- Critical vulnerabilities update
   - Bump `lodash` from `3.10.1` to `4.17.21`
   - Bump `mocha` from `3.4.1` to `7.2.0`
   - Bump `alchemy-ether` from `1.0.0` to `1.0.3`

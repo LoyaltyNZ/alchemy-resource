@@ -22,6 +22,13 @@ cache:
 before_install:
   - export CXX="g++-4.8"
 
+before_script:
+  - npm install -g npm@6.2.0
+  - npm install -g audit-filter
+
+script:
+  - npm audit --json | audit-filter --nsp-config=.nsprc --audit=-
+
 deploy:
   provider: npm
   email: cloudservices@loyalty.co.nz
