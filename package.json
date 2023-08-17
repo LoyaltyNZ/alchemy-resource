@@ -18,16 +18,16 @@
   "dependencies": {
     "alchemy-ether": "1.0.3",
     "bluebird": "3.0.5",
-    "coffee-script": "1.10.0",
+    "coffeescript": "^2.7.0",
     "lodash": "^4.17.21",
     "memcached": "2.2.0"
   },
   "devDependencies": {
     "chai": "3.4.1",
-    "mocha": "^2.5.3"
+    "mocha": "^7.2.0"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "mocha test/*.coffee --exit --require coffeescript/register --require test/spec_helper --recursive --reporter spec",
     "doc": "cat src/alchemy-resource.litcoffee > README.md && docco -l linear src/alchemy-resource.litcoffee && docco src/*.coffee -o docs/src && docco examples/*.coffee -o docs/examples"
   },
   "license": "LGPL-3.0"
