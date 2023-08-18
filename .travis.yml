@@ -28,6 +28,7 @@ before_script:
 
 script:
   - npm audit --json | audit-filter --nsp-config=.nsprc --audit=-
+  - npm test
 
 deploy:
   provider: npm
