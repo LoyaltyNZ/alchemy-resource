@@ -1,7 +1,7 @@
 {
   "name": "alchemy-resource",
   "description": "alchemy-resource is a layer on alchemy-ether that adds resource",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "homepage": "https://github.com/LoyaltyNZ/alchemy-resource",
   "repository": {
     "type": "git",
@@ -16,18 +16,18 @@
     "node": ">= 0.12.7"
   },
   "dependencies": {
-    "alchemy-ether": "1.0.0",
-    "coffee-script": "1.10.0",
-    "memcached": "2.2.0",
-    "bluebird": "3.0.5",
-    "lodash": "3.10.1"
+    "alchemy-ether": "1.0.3",
+    "bluebird": "^3.7.2",
+    "coffeescript": "^2.7.0",
+    "lodash": "^4.17.21",
+    "memcached": "^2.2.2"
   },
   "devDependencies": {
-    "mocha": "2.3.4",
-    "chai": "3.4.1"
+    "chai": "^4.3.7",
+    "mocha": "^7.2.0"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "mocha test/*.coffee --exit --require coffeescript/register --require test/spec_helper --recursive --reporter spec",
     "doc": "cat src/alchemy-resource.litcoffee > README.md && docco -l linear src/alchemy-resource.litcoffee && docco src/*.coffee -o docs/src && docco examples/*.coffee -o docs/examples"
   },
   "license": "LGPL-3.0"

@@ -98,7 +98,3 @@ The Alchemy Resource package exports:
 * David Mitchell
 * Wayne Hoover
 
-## Changelog
-
-2015-12-16 - Updating errors to Hoodoo Specification - Graham
-2015-12-3  - Open Sourced                            - Graham & Wayne
