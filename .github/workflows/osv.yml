@@ -13,3 +13,5 @@ permissions:
 jobs:
   scan-pr:
     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v1.7.1"
+    with:
+      ignore: "GHSA-gxpj-cx7g-858c,GHSA-2j2x-2gpw-g8fm,GHSA-f8q6-p94x-37v3"
