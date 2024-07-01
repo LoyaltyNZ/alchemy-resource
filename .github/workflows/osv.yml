@@ -4,14 +4,29 @@ on:
   pull_request:
     branches: [master]
 
-permissions:
-  # Require writing security events to upload SARIF file to security tab
-  security-events: write
-  # Only need to read contents
-  contents: read
-
 jobs:
-  scan-pr:
-    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v1.7.1"
-    with:
-      ignore: "GHSA-gxpj-cx7g-858c,GHSA-2j2x-2gpw-g8fm,GHSA-f8q6-p94x-37v3"
+  osv-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run OSV-Scanner
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/src -w /src ghcr.io/google/osv-scanner:latest \
+          --output=results.json \
+          --format=table \
+          --config=osv-config.toml \
+          .
+
+        continue-on-error: true
+
+      - name: Print scan results
+        if: always()
+        run: |
+            if [ -f results.json ]; then
+            cat results.json
+            exit 1
+            else
+            echo "results.json file not found. The scan may have failed to generate output."
+            fi
