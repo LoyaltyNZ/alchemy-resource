@@ -23,7 +23,12 @@
     "memcached": "^2.2.2"
   },
   "devDependencies": {
+    "braces": "^3.0.3",
     "chai": "^4.3.7",
+    "debug": "^4.3.5",
+    "flat": "^6.0.1",
+    "get-func-name": "^3.0.0",
+    "minimatch": "^9.0.5",
     "mocha": "^7.2.0"
   },
   "scripts": {
