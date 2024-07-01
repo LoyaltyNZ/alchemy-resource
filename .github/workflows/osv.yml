@@ -18,7 +18,6 @@ jobs:
           --output=results.txt \
           --format=table \
           .
-        # continue-on-error: true
 
       - name: Print scan results
         if: always()
@@ -27,4 +26,5 @@ jobs:
             cat results.txt
           else
             echo "results.txt file not found. The scan may have failed to generate output."
+            exit 1
           fi
