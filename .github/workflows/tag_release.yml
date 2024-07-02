@@ -21,7 +21,7 @@ jobs:
     - name: Get the version from CHANGELOG
       id: changelog
       run: |
-        VERSION=$(grep -Eo "^## [0-9]+\.[0-9]+\.[0-9]+" CHANGELOG.md | head -n 1 | awk '{print $2}')
+        VERSION=$(grep -Eo "^## v[0-9]+\.[0-9]+\.[0-9]+" CHANGELOG.md | head -n 1 | awk '{print $2}')
         RELEASE_NOTES=$(awk '/^## '"$VERSION"'/ {getline; while ($0 ~ /^$/) {getline}; print}' CHANGELOG.md)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
         echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
