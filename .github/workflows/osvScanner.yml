@@ -1,11 +1,12 @@
-name: OSV-Scanner
+name: osvScanner
 
 on:
   pull_request:
-    branches: [master]
+    branches: 
+      - master
 
 jobs:
-  osv-scan:
+  osvScan:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

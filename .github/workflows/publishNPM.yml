@@ -1,12 +1,12 @@
-name: prChecks
+name: Publish
 
 on:
-  pull_request:
+  push:
     branches:
       - master
 
 jobs:
-  npmTest:
+  publish:
     runs-on: ubuntu-20.04
 
     services:
@@ -37,8 +37,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+
     - name: Set up Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
@@ -46,7 +47,7 @@ jobs:
         always-auth: true
 
     - name: Install project dependencies
-      run: | 
+      run: |
         npm install
 
     - name: Build and Test
@@ -54,3 +55,7 @@ jobs:
         export CXX="g++-4.8"
         npm test
 
+    - name: Publish to npm
+      run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}

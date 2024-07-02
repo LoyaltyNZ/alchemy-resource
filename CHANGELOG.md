@@ -2,7 +2,7 @@
 
 ## v1.0.3
 
-WIP
+- Migrated CI from Travis CI to GitHub Actions [TO-7521](https://loyaltynz.atlassian.net/browse/TO-7521)
 
 ## v1.0.2
 
