@@ -1,0 +1,56 @@
+name: prChecks
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  npmTest:
+    runs-on: ubuntu-20.04
+
+    services:
+      memcached:
+        image: memcached:latest
+        ports:
+        - 11211:11211
+        options: >-
+          --health-cmd "timeout 5 bash -c 'cat < /dev/null > /dev/udp/127.0.0.1/11211'" 
+          --health-interval 10s 
+          --health-timeout 5s
+          --health-retries 5
+      rabbitmq:
+        image: rabbitmq:latest
+        ports:
+        - 5672:5672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Read .nvmrc
+      run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
+      id: nvm
+
+    - name: Use Node.js (.nvmrc)
+      uses: actions/setup-node@v4
+      with:
+        node-version: "${{ steps.nvm.outputs.NVMRC }}"
+        cache: 'npm'
+        registry-url: 'https://registry.npmjs.org'
+        always-auth: true
+
+    - name: Install project dependencies
+      run: | 
+        npm install
+
+    - name: Build and Test
+      run: |
+        export CXX="g++-4.8"
+        npm test
+

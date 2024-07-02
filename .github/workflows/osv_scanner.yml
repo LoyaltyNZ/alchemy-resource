@@ -1,0 +1,31 @@
+name: osvScanner
+
+on:
+  pull_request:
+    branches: 
+      - master
+
+jobs:
+  osvScan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run OSV-Scanner
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/src -w /src ghcr.io/google/osv-scanner:latest \
+          --config=osv-config.toml \
+          --output=results.txt \
+          --format=table \
+          .
+
+      - name: Print scan results
+        if: always()
+        run: |
+          if [ -f results.txt ]; then
+            cat results.txt
+          else
+            echo "results.txt file not found. The scan may have failed to generate output."
+            exit 1
+          fi

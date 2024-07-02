@@ -1,0 +1,46 @@
+name: tagRelease
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  tagRelease:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Git user
+      run: |
+        git config --global user.email "devops@loyalty.co.nz"
+        git config --global user.name "GitHub Actions"
+
+    - name: Get the version from CHANGELOG
+      id: changelog
+      run: |
+        VERSION=$(grep -Eo "^## [0-9]+\.[0-9]+\.[0-9]+" CHANGELOG.md | head -n 1 | awk '{print $2}')
+        RELEASE_NOTES=$(awk '/^## '"$VERSION"'/ {getline; while ($0 ~ /^$/) {getline}; print}' CHANGELOG.md)
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+        echo "$RELEASE_NOTES" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+
+    - name: Create Tag
+      id: tag
+      run: |
+        git tag -a "${{ env.VERSION }}" -m "Release ${{ env.VERSION }}"
+        git push origin "${{ env.VERSION }}"
+
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: "${{ env.VERSION }}"
+        release_name: "Release ${{ env.VERSION }}"
+        body: "${{ env.RELEASE_NOTES }}"
+        draft: false
+        prerelease: false
